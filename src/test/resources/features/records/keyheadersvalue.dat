@@ -1,0 +1,3 @@
+key1_${uuid}#{"qux":42}#{"foo":"bar","baz":42}
+key2_${uuid}#[3,4]#{"foo":"bar","baz":[1,2]}
+key3_${uuid}#value2.3#{"foo":"bar"}

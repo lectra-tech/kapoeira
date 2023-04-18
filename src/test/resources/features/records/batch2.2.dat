@@ -1,0 +1,1 @@
+samekey_${uuid}#{"anInt": 4, "aString": "${uuid}", "anOptionalString": null }

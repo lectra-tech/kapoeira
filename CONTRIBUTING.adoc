@@ -1,0 +1,49 @@
+= Contributing
+
+== Introduction
+
+You can contribute to [Kapoeira](https://github.com/lectra-tech/kapoeira) via
+[pull requests](https://help.github.com/articles/about-pull-requests/) filed.
+
+== Signing off each Commit
+
+As part of filing a pull request we ask you to sign off the
+[Developer Certificate of Origin](https://developercertificate.org/) (DCO) in each commit.
+Any Pull Request with commits that are not signed off will be reject by the
+[DCO check](https://probot.github.io/apps/dco/).
+
+A DCO is lightweight way for a contributor to confirm that they wrote or otherwise have the right
+to submit code or documentation to a project. Simply add `Signed-off-by` as shown in the example below
+to indicate that you agree with the DCO.
+
+Example for a commit message with a sign-off:
+
+----
+    doc(readme.adoc): Align sample code
+
+    Signed-off-by: John Doe <john.doe@lectra.com>
+----
+
+Git has the `-s` option (lower case) for `commit` that can sign off a commit for you, see example below:
+
+`$ git commit -s -m 'doc(readme.adoc): Align sample code'`
+
+
+== Git History
+
+TODO
+
+- [Ensure that your commit messages will make your mom proud](https://www.robertcooper.me/git-commit-messages) 
+- [See what is done on ORT](https://github.com/oss-review-toolkit/.github/blob/main/CONTRIBUTING.md#git-history)
+
+
+== Coding Conventions
+
+TODO
+- code organization
+- format
+
+
+
+
+Thank you for reading and happy contributing!

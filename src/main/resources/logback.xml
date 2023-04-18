@@ -1,0 +1,20 @@
+<configuration>
+
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <logger name="com.lectra.kapoeira" level="${LOGGING_LEVEL}" />
+    <logger name="org.apache.kafka" level="WARN" />
+    <logger name="io.confluent.kafka" level="WARN" />
+    <logger name="org.apache.kafka.common.utils.AppInfoParser" level="OFF" /> <!--to remove when custom producer implemented-->
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

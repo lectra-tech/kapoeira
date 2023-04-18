@@ -1,0 +1,2 @@
+key1_${uuid}#{"anInt": 1, "aString": "myString1", "anOptionalString": { "string": "test"} }
+key2_${uuid}#{"anInt": 2, "aString": "myString2", "anOptionalString": null} }
