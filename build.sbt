@@ -14,6 +14,8 @@ ThisBuild / organizationName := "lectra"
 ThisBuild / publishConfiguration := publishConfiguration.value.withOverwrite(true)
 ThisBuild / publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
+resolvers += "confluent" at "https://packages.confluent.io/maven/"
+
 val zioVersion = "1.0.9"
 
 lazy val root = (project in file("."))

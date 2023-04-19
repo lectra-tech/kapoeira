@@ -18,7 +18,7 @@ image::src/main/docs/images/archi.png[]
 === Locally
 [source, bash]
 ----
-./run-local.sh build
+  docker build -t kapoeira:latest .
 ----
 
 == How to test?

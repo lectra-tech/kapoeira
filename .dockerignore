@@ -1,0 +1,13 @@
+.idea
+*.log
+target
+targetAVSC
+.bloop
+.metals
+.vscode
+*/metals.sbt
+*.pem
+project/project
+.bsp
+doc/
+.git/
