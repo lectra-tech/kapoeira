@@ -18,7 +18,7 @@ image::src/main/docs/images/archi.png[]
 === Locally
 [source, bash]
 ----
-  docker build -t kapoeira:latest .
+docker build -t kapoeira:latest .
 ----
 
 == How to test?
@@ -27,7 +27,11 @@ image::src/main/docs/images/archi.png[]
 Run/Debug this Scala class : link:src/test/scala/com/lectra/kapoeira/FeaturesTestRunner.scala[FeaturesTestRunner]
 
 === With Docker Locally
-Coming soon
+.start local infra and run integration tests
+[source, bash]
+----
+docker compose up -d
+----
 
 == How to use?
 

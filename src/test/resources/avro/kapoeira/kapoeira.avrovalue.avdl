@@ -1,8 +1,0 @@
-@namespace( "com.lectra.kapoeira" )
-protocol AvrovalueProtocol {
-  record Avrovaluev1 {
-    int anInt;
-    string aString;
-    union { null, string } anOptionalString = null;
-  }
-}

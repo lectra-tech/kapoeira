@@ -1,6 +1,0 @@
-@namespace( "com.lectra.kapoeira" )
-protocol AvrokeyProtocol {
-  record Avrokeyv1 {
-    string aKey;
-  }
-}
