@@ -15,23 +15,28 @@ image::src/main/docs/images/archi.png[]
 * External commands can be called for assertions (with .sh files for example, calling docker tools if needed)
 
 == How to build?
-=== Locally
+=== Without integration tests
 [source, bash]
 ----
 docker build -t kapoeira:latest .
 ----
-
-== How to test?
-
-=== In your IDE
-Run/Debug this Scala class : link:src/test/scala/com/lectra/kapoeira/FeaturesTestRunner.scala[FeaturesTestRunner]
-
-=== With Docker Locally
+=== With integration tests
 .start local infra and run integration tests
 [source, bash]
 ----
 docker compose up -d
 ----
+.stop local infra
+[source, bash]
+----
+docker compose down
+----
+== How to test?
+
+=== In your IDE
+Run/Debug this Scala class : link:src/test/scala/com/lectra/kapoeira/FeaturesTestRunner.scala[FeaturesTestRunner]
+
+TODO TestContainers
 
 == How to use?
 
@@ -60,57 +65,98 @@ docker run --rm -ti \
 
 === Produce & consume a record
 
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/producer-key-value.feature[]
 ----
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/producer-key-value.feature[]
+endif::[]
 
 === Produce from a file
 
+
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/producer-file-value.feature[]
 ----
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/producer-file-value.feature[]
+endif::[]
+
 
 === Specify keys & headers for a record
 
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/producer-file-key-value.feature[]
 ----
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/producer-file-key-value.feature[]
+endif::[]
 
 === Assertions
 
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/assertions.feature[]
 ----
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/assertions.feature[]
+endif::[]
 
 === Call functions
 
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/call-function.feature[]
 ----
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/call-function.feature[]
+endif::[]
 
 === Call scripts
 
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/call-external-script.feature[]
 ----
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/call-external-script.feature[]
+endif::[]
 
 === Produce & Consume Avro records
 
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/producer-avro-file-key-value.feature[]
 ----
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/producer-avro-file-key-value.feature[]
+endif::[]
 
 === Produce & Consume with batches
 
+ifeval::[{safe-mode-level} < 20]
 [source, language=gherkin]
 ----
 include::src/test/resources/features/batch-produce-consume.feature[]
 ----
-
+endif::[]
+ifeval::[{safe-mode-level} >= 20]
+link:src/test/resources/features/batch-produce-consume.feature[]
+endif::[]

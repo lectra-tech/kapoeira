@@ -5,13 +5,13 @@ Feature: producer-file-key-value-mode-batch
       | name                 | alias     | format |
       | kapoeira.avrovaluev1 | kapoAlias | avro   |
     Given input topic
-      | topic                                                | alias     | key_type | value_type |
-      | private.euw.kapoeira-dsl-it.stringvalue.tracking.raw | topic_in1 | string   | string     |
-      | private.euw.kapoeira-dsl-it.avrovalue.tracking.raw   | topic_in2 | string   | kapoAlias  |
+      | topic           | alias     | key_type | value_type |
+      | topic-string    | topic_in1 | string   | string     |
+      | topic-avrovalue | topic_in2 | string   | kapoAlias  |
 
     And output topic
-      | topic                                                | alias     | key_type | value_type | readTimeoutInSecond |
-      | private.euw.kapoeira-dsl-it.mergedstringvalue.tracking.raw | topic_out | string   | string     | 5                   |
+      | topic           | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-mergejson | topic_out | string   | string     | 5                   |
     And var uuid = call function: uuid
 
   Scenario: Produce records in multiple topics, using batch mode to keep order between consumption and production

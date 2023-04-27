@@ -1,0 +1,1 @@
+{"schema": "{\"type\":\"record\",\"name\":\"Avrovaluev1\",\"namespace\":\"com.lectra.kapoeira\",\"fields\":[{\"name\":\"anInt\",\"type\":\"int\"},{\"name\":\"aString\",\"type\":\"string\"},{\"name\":\"anOptionalString\",\"type\":[\"null\",\"string\"],\"default\":null}]}"}

@@ -5,11 +5,11 @@ Feature: consumer-avro-key-value
       | name                 | alias      | format |
       | kapoeira.avrovaluev1 | avro_value | avro   |
     And input topic
-      | topic                                              | alias    | key_type | value_type |
-      | private.euw.kapoeira-dsl-it.avrovalue.tracking.raw | topic_in | string   | avro_value |
+      | topic           | alias    | key_type | value_type |
+      | topic-avrovalue | topic_in | string   | avro_value |
     And output topic
-      | topic                                              | alias     | key_type | value_type | readTimeoutInSecond |
-      | private.euw.kapoeira-dsl-it.avrovalue.tracking.raw | topic_out | string   | avro_value | 10                  |
+      | topic           | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-avrovalue | topic_out | string   | avro_value | 10                  |
     And var uuid = call function : uuid
 
   Scenario: Produce a record

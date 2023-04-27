@@ -2,8 +2,8 @@ Feature: consumer-key-value
 
   Background:
     Given input topic
-      | topic                                                | alias    | key_type | value_type |
-      | private.euw.kapoeira-dsl-it.stringvalue.tracking.raw | topic_in | string   | string     |
+      | topic        | alias    | key_type | value_type |
+      | topic-string | topic_in | string   | string     |
     And var foo = 42
     And var bar = 33
     And var key = aTestKey
@@ -11,8 +11,8 @@ Feature: consumer-key-value
     And var uuid = call function: uuid
     And var testJson = {"obj": "hello world" }
     And output topic
-      | topic                                                | alias     | key_type | value_type | readTimeoutInSecond |
-      | private.euw.kapoeira-dsl-it.stringvalue.tracking.raw | topic_out | string   | string     | 8                   |
+      | topic        | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-string | topic_out | string   | string     | 8                   |
 
   Scenario: Produce a record String/String
     When records with key and value are sent

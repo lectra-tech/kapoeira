@@ -2,7 +2,7 @@
 version: '3.5'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.2.0
+    image: confluentinc/cp-zookeeper:${CONFLUENT_KAFKA_VERSION}
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -13,7 +13,7 @@ services:
     networks:
       - local_kafka
   kafka:
-    image: confluentinc/cp-server:7.2.0
+    image: confluentinc/cp-server:${CONFLUENT_KAFKA_VERSION}
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -44,7 +44,7 @@ services:
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.2.0
+    image: confluentinc/cp-schema-registry:${CONFLUENT_KAFKA_VERSION}
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -58,7 +58,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:29092'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
   control-center:
-    image: confluentinc/cp-enterprise-control-center:7.2.0
+    image: confluentinc/cp-enterprise-control-center:${CONFLUENT_KAFKA_VERSION}
     hostname: control-center
     container_name: control-center
     depends_on:
@@ -80,7 +80,7 @@ services:
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
   primary-ksqldb-server:
-    image: confluentinc/cp-ksqldb-server:7.2.0
+    image: confluentinc/cp-ksqldb-server:${CONFLUENT_KAFKA_VERSION}
     hostname: primary-ksqldb-server
     container_name: primary-ksqldb-server
     depends_on:
@@ -97,20 +97,24 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
   create-topics:
-    image: confluentinc/cp-enterprise-kafka:7.2.0
+    image: confluentinc/cp-enterprise-kafka:${CONFLUENT_KAFKA_VERSION}
     volumes:
       - ./src/test/resources/scripts:/opt/kapoeira/scripts
+    working_dir: /opt/kapoeira/scripts
     networks:
       - local_kafka
+    depends_on:
+      - kafka
+      - schema-registry
     container_name: create-topics
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
         cub kafka-ready -b kafka:29092 1 300 && \
         echo Creating topics... && \
-        /opt/kapoeira/scripts/createTopics.sh && \
+        ./createTopics.sh && \
         echo Creating subjects... && \
-        /opt/kapoeira/scripts/createSchemas.sh'"
+        ./createSchemas.sh'"
   create-streams:
-    image: confluentinc/cp-ksqldb-cli:7.2.0
+    image: confluentinc/cp-ksqldb-cli:${CONFLUENT_KAFKA_VERSION}
     container_name: create-streams
     volumes:
       - ./src/test/resources/scripts:/opt/kapoeira/scripts
@@ -130,8 +134,6 @@ services:
     container_name: kapoeira-it
     depends_on:
       create-streams:
-        condition: service_completed_successfully
-      create-topics:
         condition: service_completed_successfully
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

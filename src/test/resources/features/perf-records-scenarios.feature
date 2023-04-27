@@ -2,12 +2,12 @@ Feature: consumer-file-key-value
 
   Background:
     Given input topic
-      | topic                                                | alias    | key_type | value_type |
-      | private.euw.kapoeira-dsl-it.stringvalue.tracking.raw | topic_in | string   | string     |
+      | topic        | alias    | key_type | value_type |
+      | topic-string | topic_in | string   | string     |
 
     And output topic
-      | topic                                                | alias     | key_type | value_type | readTimeoutInSecond |
-      | private.euw.kapoeira-dsl-it.stringvalue.tracking.raw | topic_out | string   | string     | 5                   |
+      | topic        | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-string | topic_out | string   | string     | 5                   |
 
   Scenario Outline: Produce several records
     Given var uuid = call function : uuid
@@ -18,7 +18,7 @@ Feature: consumer-file-key-value
       | topic_in    | #         | features/records/perf-keyvalue.dat |
 
     Then expected records
-      | topic_alias | key          | value       |
+      | topic_alias | key          | value        |
       | topic_out   | key1_${uuid} | aliasValue10 |
       | topic_out   | key1_${uuid} | aliasValue11 |
       | topic_out   | key1_${uuid} | aliasValue12 |

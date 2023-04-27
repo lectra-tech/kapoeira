@@ -1,0 +1,1 @@
+{"schema": "{\"type\":\"record\",\"name\":\"Avrokeyv1\",\"namespace\":\"com.lectra.kapoeira\",\"fields\":[{\"name\":\"aKey\",\"type\":\"string\"}]}"}

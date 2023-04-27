@@ -1,0 +1,1 @@
+{"schemaType": "JSON","schema": "{ \"$schema\": \"http://json-schema.org/draft-04/schema#\", \"title\": \"com.lectra.kapoeira.jsonvaluev1\", \"description\": \"jsonvaluev1\", \"type\": \"object\", \"properties\": { \"anInt\": { \"type\": \"integer\" }, \"aString\": { \"type\": \"string\" }, \"anOptionalString\": {\"type\":[\"string\",\"null\"]} } }"}

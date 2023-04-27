@@ -5,11 +5,11 @@ Feature: producer-avro-file-key-value
       | name                 | alias     | format |
       | kapoeira.avrovaluev1 | kapoAlias | avro   |
     Given input topic
-      | topic                                              | alias    | key_type | value_type |
-      | private.euw.kapoeira-dsl-it.avrovalue.tracking.raw | topic_in | string   | kapoAlias  |
+      | topic           | alias    | key_type | value_type |
+      | topic-avrovalue | topic_in | string   | kapoAlias  |
     And output topic
-      | topic                                              | alias     | key_type | value_type | readTimeoutInSecond |
-      | private.euw.kapoeira-dsl-it.avrovalue.tracking.raw | topic_out | string   | kapoAlias  | 10                  |
+      | topic           | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-avrovalue | topic_out | string   | kapoAlias  | 10                  |
     And var uuid = call function: uuid
 
   Scenario: Produce a record

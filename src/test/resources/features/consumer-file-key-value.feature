@@ -2,11 +2,11 @@ Feature: consumer-file-key-value
 
   Background:
     Given input topic
-      | topic                                                | alias    | key_type | value_type |
-      | private.euw.kapoeira-dsl-it.stringvalue.tracking.raw | topic_in | string   | string     |
+      | topic        | alias    | key_type | value_type |
+      | topic-string | topic_in | string   | string     |
     And output topic
-      | topic                                                | alias     | key_type | value_type | readTimeoutInSecond |
-      | private.euw.kapoeira-dsl-it.stringvalue.tracking.raw | topic_out | string   | string     | 8                   |
+      | topic        | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-string | topic_out | string   | string     | 8                   |
     And var uuid = call function : uuid
 
   Scenario: Produce a record
