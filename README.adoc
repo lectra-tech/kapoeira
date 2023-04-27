@@ -1,18 +1,56 @@
 = Kapoeira
-:toc:
+:toc: left
 :sectnums:
 
 Dockerized Integration test tool for Kafka Environment
 
+== Why Kapoeira ?
+It is easy to make units tests on a kafka stream (see https://kafka.apache.org/21/documentation/streams/developer-guide/testing.html[Apache Kafka Topology Test Driver^] and https://www.confluent.io/blog/test-kafka-streams-with-topologytestdriver/[Confluent documentation^]) but how to make integration tests ?
 
-image::src/main/docs/images/kapoeira.png[]
+Kapoeira has been developed for this purpose.
 
-image::src/main/docs/images/archi.png[]
+image::docs/diagrams/kapoeira.png[]
 
-== Context
-* Define Gherkin features respecting Kapoeira DSL defined by these link:src/test/resources/features[examples]
-* Kafka records can be defined in Gherkin files or with links to external files (json, avro-json, plain...)
-* External commands can be called for assertions (with .sh files for example, calling docker tools if needed)
+== Tooling
+
+* Written in scala 2.13
+* Based on https://github.com/cucumber/cucumber-jvm-scala[Cucumber Scala^]
+* Uses specific Gherkin DSL
+* Supports Raw, Json and Avro payloads
+* Supports shell scripts for external interactions
+* Usable as a simple jar or docker image
+
+== Kapoeira DSL
+
+Feature who tests kafka stream doing "upper case" operation
+
+[source,gherkin]
+----
+Feature: My first feature
+  Background:
+    Given input topic
+      | topic    | alias    | key_type | value_type |
+      | topic.in | topic_in | string   | string     |
+
+    And output topic
+      | topic     | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic.out | topic_out | string   | string     | 5                   |
+
+  Scenario: My first scenario
+    When records with key and value are sent
+      | topic_alias | key   | value |
+      | topic_in    | myKey | a     |
+      | topic_in    | myKey | b     |
+      | topic_in    | myKey | c     |
+    Then expected records
+      | topic_alias | key   | value    |
+      | topic_out   | myKey | result_1 |
+      | topic_out   | myKey | result_2 |
+      | topic_out   | myKey | result_3 |
+    And assert result_1 $ == "A"
+    And assert result_2 $ == "B"
+    And assert result_3 $ == "C"
+----
 
 == How to build?
 === Without integration tests

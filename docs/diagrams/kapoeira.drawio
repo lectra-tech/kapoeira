@@ -1,0 +1,73 @@
+<mxfile host="Electron" modified="2023-04-27T15:19:59.790Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="nAZyOkmsIH-84GgbK4ll" version="21.2.1" type="device">
+  <diagram name="Page-1" id="uyP1s7jeSPjegohaz3iT">
+    <mxGraphModel dx="830" dy="649" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;sketch=1;curveFitting=1;jiggle=2;" parent="1" source="IQ8TdL7R34tAi3qAn72l-1" target="IQ8TdL7R34tAi3qAn72l-18" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-21" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot; style=&quot;font-size: 10px;&quot;&gt;Topic Out&lt;br&gt;[A,B,C,D...]&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Helvetica;fontColor=default;" parent="IQ8TdL7R34tAi3qAn72l-19" vertex="1" connectable="0">
+          <mxGeometry x="-0.2067" y="1" relative="1" as="geometry">
+            <mxPoint y="-24" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-1" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot;&gt;&lt;b style=&quot;font-size: 14px;&quot;&gt;Kafka Stream&lt;br&gt;&lt;/b&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;Data processing&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f8cecc;strokeColor=#b85450;shadow=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="530" y="125" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=12;fontColor=default;" parent="1" source="IQ8TdL7R34tAi3qAn72l-14" target="IQ8TdL7R34tAi3qAn72l-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;sketch=1;curveFitting=1;jiggle=2;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="428.95522388059703" y="155" as="sourcePoint" />
+            <mxPoint x="531" y="155" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-20" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot; style=&quot;font-size: 10px;&quot;&gt;Topic In&lt;br&gt;[a,b,c,d...]&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Helvetica;fontColor=default;" parent="IQ8TdL7R34tAi3qAn72l-16" vertex="1" connectable="0">
+          <mxGeometry x="0.0004" y="3" relative="1" as="geometry">
+            <mxPoint y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-14" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://logodix.com/logo/2007102.png;clipPath=inset(13.67% 26.43% 19.33% 31.14%);" parent="1" vertex="1">
+          <mxGeometry x="350" y="100" width="68.95522388059702" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=12;fontColor=default;curved=1;sketch=1;curveFitting=1;jiggle=2;" parent="1" source="IQ8TdL7R34tAi3qAn72l-18" target="IQ8TdL7R34tAi3qAn72l-23" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-27" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot; style=&quot;font-size: 10px;&quot;&gt;Consume Data Out&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Helvetica;fontColor=default;" parent="IQ8TdL7R34tAi3qAn72l-26" vertex="1" connectable="0">
+          <mxGeometry x="0.0612" y="-20" relative="1" as="geometry">
+            <mxPoint x="6" y="30" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-18" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://logodix.com/logo/2007102.png;clipPath=inset(13.67% 26.43% 19.33% 31.14%);sketch=1;curveFitting=1;jiggle=2;" parent="1" vertex="1">
+          <mxGeometry x="750" y="100" width="68.95522388059702" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;curved=1;sketch=1;curveFitting=1;jiggle=2;" parent="1" source="IQ8TdL7R34tAi3qAn72l-23" target="IQ8TdL7R34tAi3qAn72l-14" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-25" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot; style=&quot;font-size: 10px;&quot;&gt;Produce Data In&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Helvetica;fontColor=default;" parent="IQ8TdL7R34tAi3qAn72l-24" vertex="1" connectable="0">
+          <mxGeometry x="-0.3154" y="-8" relative="1" as="geometry">
+            <mxPoint x="-28" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-23" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot;&gt;&lt;b style=&quot;font-size: 14px;&quot;&gt;Kapoeira&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;Assert Data Out&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#dae8fc;strokeColor=#6c8ebf;shadow=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="530" y="260" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-28" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot; style=&quot;font-size: 10px;&quot;&gt;1&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeColor=#6c8ebf;strokeWidth=1;fontFamily=Helvetica;fontSize=12;fillColor=#dae8fc;opacity=50;" parent="1" vertex="1">
+          <mxGeometry x="370" y="285" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-31" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot; style=&quot;font-size: 10px;&quot;&gt;3&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeColor=#6c8ebf;strokeWidth=1;fontFamily=Helvetica;fontSize=12;fillColor=#dae8fc;opacity=50;" parent="1" vertex="1">
+          <mxGeometry x="542" y="289" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="IQ8TdL7R34tAi3qAn72l-32" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Handlee&quot; face=&quot;Handlee&quot; style=&quot;font-size: 10px;&quot;&gt;2&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeColor=#6c8ebf;strokeWidth=1;fontFamily=Helvetica;fontSize=12;fillColor=#dae8fc;opacity=50;" parent="1" vertex="1">
+          <mxGeometry x="686" y="291" width="20" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
