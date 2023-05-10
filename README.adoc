@@ -5,6 +5,7 @@
 Dockerized Integration test tool for Kafka Environment
 
 == Why Kapoeira ?
+
 It is easy to make units tests on a kafka stream (see https://kafka.apache.org/21/documentation/streams/developer-guide/testing.html[Apache Kafka Topology Test Driver^] and https://www.confluent.io/blog/test-kafka-streams-with-topologytestdriver/[Confluent documentation^]) but how to make integration tests ?
 
 Kapoeira has been developed for this purpose.
@@ -30,48 +31,60 @@ Feature: My first feature
   Background:
     Given input topic
       | topic    | alias    | key_type | value_type |
-      | topic.in | topic_in | string   | string     |
+      | topic.in | topic_in | string   | string     | <1>
 
     And output topic
       | topic     | alias     | key_type | value_type | readTimeoutInSecond |
-      | topic.out | topic_out | string   | string     | 5                   |
+      | topic.out | topic_out | string   | string     | 5                   | <2>
 
   Scenario: My first scenario
-    When records with key and value are sent
+    When records with key and value are sent <3>
       | topic_alias | key   | value |
       | topic_in    | myKey | a     |
       | topic_in    | myKey | b     |
       | topic_in    | myKey | c     |
-    Then expected records
+    Then expected records                    <4>
       | topic_alias | key   | value    |
       | topic_out   | myKey | result_1 |
       | topic_out   | myKey | result_2 |
       | topic_out   | myKey | result_3 |
-    And assert result_1 $ == "A"
+    And assert result_1 $ == "A"             <5>
     And assert result_2 $ == "B"
     And assert result_3 $ == "C"
 ----
+<1> Setup your input topics
+<2> Setup your output topics
+<3> Produce some data in your input topic
+<4> Consume data from your output topic
+<5> Assert the output data
 
 == How to build?
+
 === Without integration tests
-[source, bash]
+
+[source,bash]
 ----
 docker build -t kapoeira:latest .
 ----
+
 === With integration tests
+
 .start local infra and run integration tests
-[source, bash]
+[source,bash]
 ----
 docker compose up -d
 ----
+
 .stop local infra
-[source, bash]
+[source,bash]
 ----
 docker compose down
 ----
+
 == How to test?
 
 === In your IDE
+
 Run/Debug this Scala class : link:src/test/scala/com/lectra/kapoeira/FeaturesTestRunner.scala[FeaturesTestRunner]
 
 TODO TestContainers
@@ -79,8 +92,9 @@ TODO TestContainers
 == How to use?
 
 === Manual Docker command
+
 .Draft
-[source, bash]
+[source,bash]
 ----
 docker run --rm -ti \
     -v <PATH_TO_YOUR_FEATURES_FOLDER>:/features \
@@ -101,23 +115,142 @@ docker run --rm -ti \
 * KAFKA_SCHEMA_REGISTRY_URL only for AVRO content
 ====
 
-=== Produce & consume a record
+== Syntax Guide
 
-ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+=== Features and Background
+
+When you want to create a test, you should start by creating a Feature.
+The start of your test file will have to begin with the key word ``Feature`` and then a name of that feature :
+
+[source,language=gherkin]
 ----
-include::src/test/resources/features/producer-key-value.feature[]
+Feature: producer-key-value
 ----
-endif::[]
-ifeval::[{safe-mode-level} >= 20]
-link:src/test/resources/features/producer-key-value.feature[]
-endif::[]
+
+Then, you have to setup the background of your test.
+This is important, especially for kafka, has you will use topics, and maybe avro or json schema.
+
+[source,language=gherkin]
+----
+Background:
+----
+
+==== Input Topics
+
+First you need to declare the topics that you want to push data into.
+This is done by declaring  ``Given input topic`` +
+Then you have to had a table that will contain the details of those topics, one line per topic :
+
+[source,language=gherkin]
+----
+Given input topic
+| topic        | alias    | key_type | value_type |
+| topic-string | topic_in | string   | string     |
+----
+
+topic:: The actual name of the topic you want to push data
+alias:: You can put an alias for your topic name and use it later in the test.
+This can be convenient to factorize the use of it
+key_type:: It specifies the type in which you want to serialize your data when you push a key in your topic.
+Values are :
+
+* ``avro`` if you use an avro key
+* ``json`` if you use a key in json with a verified schema
+* ``string`` or any other word for a simple string format
+
+value_type:: Same as ``key_type`` but for the value in your topic
+
+==== Output Topics
+
+After you declared your input topics, you need to declare the output topics that will contain the output data that you will assert.
+It is pretty much the same as input topics but you need to use the keyword ``output topic``.
+
+[source,language=gherkin]
+----
+And output topic
+| topic        | alias     | key_type | value_type | readTimeoutInSecond |
+| topic-string | topic_out | string   | string     | 5                   |
+----
+
+The only parameter in addition is ``readTimeoutInSecond`` and it allows you to define the duration the consumer will fetch data from the topic (in seconds).
+
+=== Scenarios and Assertions
+Once your background is declared, you can start to write scenarios. You can write several scenarios in the same test file, and each one will use the same ``Background``
+
+To write a scenario, it is like a ``Feature``, you need to specify the keyword ``Scenario`` then add a name to it.
+[source,language=gherkin]
+----
+Scenario: Produce a record
+----
+
+==== When
+
+Then you can use the keywords ``When records with key and value are sent`` to specify what to do with your input topic
+[source,language=gherkin]
+----
+When records with key and value are sent
+| topic_alias | key              | value  |
+| topic_in    | aTestKey_${uuid} | someValue |
+----
+topic_alias:: It is the alias of the topic you declared in the ``Background`` part
+key:: It is the actual key you want to push into the topic (string format here)
+value:: It is the actual value that will be sent to the topic (string format here)
+
+==== Then
+
+Now that your data is pushed in Kafka, you want to assert that data is well produced in an output topic and assert that it is conformed to your expectations.
+To do that you need to use the key word ``Then expected records``
+[source,language=gherkin]
+----
+Then expected records
+| topic_alias | key              | value  |
+| topic_out   | aTestKey_${uuid} | aValue |
+----
+topic_alias:: Same as the ``When`` part
+key:: It is the actual key that you expect in your output topic. It is very useful in a deployed environment as it will allow you to target a specific record in your output topic. This way, you will assert one record and not the entire topic.
+value:: It is an alias for your record. Like a name of a variable in a program file. You will use this alias or name in the assertion part.
+
+==== Assertion
+
+Now that you have the output record, you want to assert it. The record are always parsed as JSON format, even if the format in the topic was avro or string. To assert fields and subfileds, you can use the https://github.com/json-path/JsonPath[JsonPath DSL]
+[source,language=gherkin]
+----
+And assert aValue $ == "someValue"
+----
+
+****
+Full Example ;
+
+[source,language=gherkin]
+----
+Feature: producer-key-value
+
+  Background:
+    Given input topic
+      | topic        | alias    | key_type | value_type |
+      | topic-string | topic_in | string   | string     |
+    And output topic
+      | topic        | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-string | topic_out | string   | string     | 5                   |
+    And var uuid = call function: uuid
+
+  Scenario: Produce a record
+    When records with key and value are sent
+      | topic_alias | key              | value  |
+      | topic_in    | aTestKey_${uuid} | someValue |
+    Then expected records
+      | topic_alias | key              | value  |
+      | topic_out   | aTestKey_${uuid} | aValue |
+
+    And assert aValue $ == "someValue"
+
+----
+****
 
 === Produce from a file
 
-
 ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+[source,language=gherkin]
 ----
 include::src/test/resources/features/producer-file-value.feature[]
 ----
@@ -126,11 +259,10 @@ ifeval::[{safe-mode-level} >= 20]
 link:src/test/resources/features/producer-file-value.feature[]
 endif::[]
 
-
 === Specify keys & headers for a record
 
 ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+[source,language=gherkin]
 ----
 include::src/test/resources/features/producer-file-key-value.feature[]
 ----
@@ -142,7 +274,7 @@ endif::[]
 === Assertions
 
 ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+[source,language=gherkin]
 ----
 include::src/test/resources/features/assertions.feature[]
 ----
@@ -154,7 +286,7 @@ endif::[]
 === Call functions
 
 ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+[source,language=gherkin]
 ----
 include::src/test/resources/features/call-function.feature[]
 ----
@@ -166,7 +298,7 @@ endif::[]
 === Call scripts
 
 ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+[source,language=gherkin]
 ----
 include::src/test/resources/features/call-external-script.feature[]
 ----
@@ -178,7 +310,7 @@ endif::[]
 === Produce & Consume Avro records
 
 ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+[source,language=gherkin]
 ----
 include::src/test/resources/features/producer-avro-file-key-value.feature[]
 ----
@@ -190,7 +322,7 @@ endif::[]
 === Produce & Consume with batches
 
 ifeval::[{safe-mode-level} < 20]
-[source, language=gherkin]
+[source,language=gherkin]
 ----
 include::src/test/resources/features/batch-produce-consume.feature[]
 ----
@@ -198,3 +330,16 @@ endif::[]
 ifeval::[{safe-mode-level} >= 20]
 link:src/test/resources/features/batch-produce-consume.feature[]
 endif::[]
+
+== Test Reports
+
+Kapoeira uses the tools from Cucumber to generate reports.
+
+Three output format are generated after every launch ;
+
+* HTML
+* JSON
+* XML
+
+image::src/test/resources/report-kapo.png[]
+
