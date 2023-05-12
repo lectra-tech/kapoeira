@@ -11,8 +11,10 @@ Feature: producer-key-value
 
   Scenario: Produce a record
     When records with key and value are sent
-      | topic_alias | key              | value  |
-      | topic_in    | aTestKey_${uuid} | aValue |
+      | topic_alias | key              | value     |
+      | topic_in    | aTestKey_${uuid} | someValue |
     Then expected records
       | topic_alias | key              | value  |
       | topic_out   | aTestKey_${uuid} | aValue |
+
+    And assert aValue $ == "someValue"

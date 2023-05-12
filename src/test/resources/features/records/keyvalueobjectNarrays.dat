@@ -1,2 +1,1 @@
-key1_${uuid}#{"foos":["item1","item2","item3"],"bar":{"baz":["item1","item2","item3"]}}
-key2_${uuid}#{"qux":[{"key1":"toto"},{"key2":"titi"}]}
+key1_${uuid}#{"foo":"fooString","fooInt":42,"foos":["item1","item2","item3"],"qux":[{"key1":"toto"},{"key2":"titi"}],"bar":{"baz":["item1","item2","item3"]}}

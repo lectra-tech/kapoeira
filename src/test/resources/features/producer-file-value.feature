@@ -17,3 +17,5 @@ Feature: producer-file-value
       | topic_alias | key          | value  |
       | topic_out   | keyX_${uuid} | valueA |
 
+    And assert valueA $ == "valueA"
+

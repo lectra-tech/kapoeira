@@ -14,5 +14,9 @@ Feature: producer-file-formatted-value
       | topic_alias | key          | file                                 |
       | topic_in    | keyY_${uuid} | features/records/formattedvalue.json |
     Then expected records
-      | topic_alias | key          | value |
-      | topic_out   | keyY_${uuid} | ?     |
+      | topic_alias | key          | value          |
+      | topic_out   | keyY_${uuid} | formattedValue |
+
+    And assert formattedValue $.field1 == "value1"
+
+

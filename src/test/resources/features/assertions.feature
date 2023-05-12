@@ -31,14 +31,17 @@ Feature: assertions
       | topic_alias | separator | file                                       |
       | topic_in    | #         | features/records/keyvalueobjectNarrays.dat |
     Then expected records
-      | topic_alias | key          | value       |
-      | topic_out   | key1_${uuid} | aliasValue1 |
-      | topic_out   | key2_${uuid} | aliasValue2 |
-    And assert aliasValue1 $ match object {"foos":["item1","item2","item3"],"bar":{"baz":["item1","item2","item3"]}}
-    And assert aliasValue1 $ match object {"foos":["item1","item2","item3"]}
-    And assert aliasValue1 $ match object {"bar":{"baz":["item1","item2","item3"]}}
-    And assert aliasValue1 $.bar match object {"baz":["item1","item2","item3"]}
-    And assert aliasValue1 $.bar.baz[0] == "item1"
-    And assert aliasValue1 $ match exact object {"foos":["item1","item2","item3"],"bar":{"baz":["item1","item2","item3"]}}
-    And assert aliasValue1 $.bar match exact object {"baz":["item1","item2","item3"]}
-    And assert aliasValue2 $.qux[?(@.key1!=null)] match object {"key1":"toto"}
+      | topic_alias | key          | value  |
+      | topic_out   | key1_${uuid} | aValue |
+    And assert aValue $.foo == "fooString"
+    And assert aValue $.fooInt == 42
+    And assert aValue $.foos has size 3
+    And assert aValue $.foos == ["item1","item2","item3"]
+    And assert aValue $ match object {"foos":["item1","item2","item3"],"bar":{"baz":["item1","item2","item3"]}}
+    And assert aValue $ match object {"foos":["item1","item2","item3"]}
+    And assert aValue $ match object {"bar":{"baz":["item1","item2","item3"]}}
+    And assert aValue $.bar match object {"baz":["item1","item2","item3"]}
+    And assert aValue $.bar.baz[0] == "item1"
+    And assert aValue $ match exact object {"foo":"fooString","fooInt":42,"foos":["item1","item2","item3"],"qux":[{"key1":"toto"},{"key2":"titi"}],"bar":{"baz":["item1","item2","item3"]}}
+    And assert aValue $.bar match exact object {"baz":["item1","item2","item3"]}
+    And assert aValue $.qux[?(@.key1!=null)] match object {"key1":"toto"}

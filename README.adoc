@@ -52,6 +52,7 @@ Feature: My first feature
     And assert result_2 $ == "B"
     And assert result_3 $ == "C"
 ----
+
 <1> Setup your input topics
 <2> Setup your output topics
 <3> Produce some data in your input topic
@@ -152,11 +153,8 @@ topic:: The actual name of the topic you want to push data
 alias:: You can put an alias for your topic name and use it later in the test.
 This can be convenient to factorize the use of it
 key_type:: It specifies the type in which you want to serialize your data when you push a key in your topic.
-Values are :
-
-* ``avro`` if you use an avro key
-* ``json`` if you use a key in json with a verified schema
-* ``string`` or any other word for a simple string format
+By default, it will be a string format.
+If you want to use avro or JSON, see section <<_avro_and_json_schema>>
 
 value_type:: Same as ``key_type`` but for the value in your topic
 
@@ -175,9 +173,12 @@ And output topic
 The only parameter in addition is ``readTimeoutInSecond`` and it allows you to define the duration the consumer will fetch data from the topic (in seconds).
 
 === Scenarios and Assertions
-Once your background is declared, you can start to write scenarios. You can write several scenarios in the same test file, and each one will use the same ``Background``
+
+Once your background is declared, you can start to write scenarios.
+You can write several scenarios in the same test file, and each one will use the same ``Background``
 
 To write a scenario, it is like a ``Feature``, you need to specify the keyword ``Scenario`` then add a name to it.
+
 [source,language=gherkin]
 ----
 Scenario: Produce a record
@@ -186,12 +187,14 @@ Scenario: Produce a record
 ==== When
 
 Then you can use the keywords ``When records with key and value are sent`` to specify what to do with your input topic
+
 [source,language=gherkin]
 ----
 When records with key and value are sent
-| topic_alias | key              | value  |
-| topic_in    | aTestKey_${uuid} | someValue |
+| topic_alias | key      | value     |
+| topic_in    | aTestKey | someValue |
 ----
+
 topic_alias:: It is the alias of the topic you declared in the ``Background`` part
 key:: It is the actual key you want to push into the topic (string format here)
 value:: It is the actual value that will be sent to the topic (string format here)
@@ -200,19 +203,28 @@ value:: It is the actual value that will be sent to the topic (string format her
 
 Now that your data is pushed in Kafka, you want to assert that data is well produced in an output topic and assert that it is conformed to your expectations.
 To do that you need to use the key word ``Then expected records``
+
 [source,language=gherkin]
 ----
 Then expected records
-| topic_alias | key              | value  |
-| topic_out   | aTestKey_${uuid} | aValue |
+| topic_alias | key      | value  |
+| topic_out   | aTestKey | aValue |
 ----
+
 topic_alias:: Same as the ``When`` part
-key:: It is the actual key that you expect in your output topic. It is very useful in a deployed environment as it will allow you to target a specific record in your output topic. This way, you will assert one record and not the entire topic.
-value:: It is an alias for your record. Like a name of a variable in a program file. You will use this alias or name in the assertion part.
+key:: It is the actual key that you expect in your output topic.
+It is very useful in a deployed environment as it will allow you to target a specific record in your output topic.
+This way, you will assert one record and not the entire topic.
+value:: It is an alias for your record.
+Like a name of a variable in a program file.
+You will use this alias or name in the assertion part.
 
 ==== Assertion
 
-Now that you have the output record, you want to assert it. The record are always parsed as JSON format, even if the format in the topic was avro or string. To assert fields and subfileds, you can use the https://github.com/json-path/JsonPath[JsonPath DSL]
+Now that you have the output record, you want to assert it.
+The record are always parsed as JSON format, even if the format in the topic was avro or string.
+To assert fields and subfileds, you can use the https://github.com/json-path/JsonPath[JsonPath DSL^]
+
 [source,language=gherkin]
 ----
 And assert aValue $ == "someValue"
@@ -236,54 +248,284 @@ Feature: producer-key-value
 
   Scenario: Produce a record
     When records with key and value are sent
-      | topic_alias | key              | value  |
-      | topic_in    | aTestKey_${uuid} | someValue |
+      | topic_alias | key      | value  |
+      | topic_in    | aTestKey | someValue |
     Then expected records
-      | topic_alias | key              | value  |
-      | topic_out   | aTestKey_${uuid} | aValue |
+      | topic_alias | key      | value  |
+      | topic_out   | aTestKey | aValue |
 
     And assert aValue $ == "someValue"
 
 ----
 ****
 
-=== Produce from a file
+=== Avro and JSON Schema
 
-ifeval::[{safe-mode-level} < 20]
+==== Defining format
+
+If you use a Schema registry with avro or JSON schema, then you can add the subject of your schema in your tests.
+
+You can specify them in the ``Background`` with the keywords ``Given subject`` :
+
 [source,language=gherkin]
 ----
-include::src/test/resources/features/producer-file-value.feature[]
+Feature: consumer-avro-key-value
+
+  Background:
+    Given subject
+      | name                 | alias      | format |
+      | kapoeira.avrokeyv1   | avro_key   | avro   |
+      | kapoeira.avrovaluev1 | avro_value | avro   |
+    And input topic
+      | topic              | alias    | key_type | value_type |
+      | topic-avrokeyvalue | topic_in | avro_key | avro_value |
+    And output topic
+      | topic              | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-avrokeyvalue | topic_out | avro_key | avro_value | 10                  |
 ----
-endif::[]
-ifeval::[{safe-mode-level} >= 20]
-link:src/test/resources/features/producer-file-value.feature[]
-endif::[]
 
-=== Specify keys & headers for a record
+name:: It is the name of the subject that is registered in the Schema Registry.
+It will be used to fetch the schema on this url : `+http://KAFKA_SCHEMA_REGISTRY_URL/subjects/SUBJECT_NAME/versions/latest/schema+``
+alias:: Same as alias for topics.
+It is a name that you will use to define the type of a topic.
+format::
+* ``avro`` if you use an avro key
+* ``json`` if you use a key in json with a verified schema
 
-ifeval::[{safe-mode-level} < 20]
+[IMPORTANT]
+====
+the subject alias must be used in the ``key_type`` or ``value_type`` when defining topics.
+Kapoeira will know that your data should be serialized/deserialized in the right format by looking in the definition of the subject through the alias.
+====
+
+==== Serializing /  Deserialization Data
+
+If you want to use avro format, you should write your input data in JSON following this example :
+
+****
+Schema
+
+[source,language=json]
+----
+{
+    "type": "record",
+    "name": "Avrovaluev1",
+    "namespace": "com.lectra.kapoeira",
+    "fields": [
+        {
+            "name": "anInt",
+            "type": "int"
+        },
+        {
+            "name": "aString",
+            "type": "string"
+        },
+        {
+            "name": "anOptionalString",
+            "type": [                  <1>
+                "null",
+                "string"
+            ],
+            "default": null
+        }
+    ]
+}
+----
+
+Example Data
+
+[source,language=json]
+----
+{
+    "anInt": 1,
+    "aString": "myString1",
+    "anOptionalString": {
+        "string": "test"               <1>
+    }
+}
+----
+
+<1> If your field is nullable, then when setting a value to that field, you must put the type in your JSON
+****
+
+=== Produce data from File
+
+==== Value from file
+
+It is possible to put your input data in a separate file.
+To use this file, you need to use the key words
+``When records from file with value are sent`` and then put the path in the column ``file``
+
 [source,language=gherkin]
 ----
-include::src/test/resources/features/producer-file-key-value.feature[]
+ Scenario: Produce a record
+    When records from file   with value are sent
+      | topic_alias | key  | file                       |
+      | topic_in    | keyX | features/records/value.dat |
 ----
-endif::[]
-ifeval::[{safe-mode-level} >= 20]
-link:src/test/resources/features/producer-file-key-value.feature[]
-endif::[]
+
+Each line in the file will result as the value in a record in kafka, and the key will be the one that is passed in the table for all records
+
+==== Key, value and headers from file
+
+You can also specify a key and headers for every record you want to push from a file.
+You need to use the keywords ``When records from file with key and value are sent``
+and use the column ``separator``.
+
+[source,language=gherkin]
+----
+    When records from file with  key  and  value  are sent
+      | topic_alias | separator | file                                 |
+      | topic_in    | #         | features/records/keyheadersvalue.dat |
+----
+
+The separator is a character that you can put between your key, value and your headers on the line in your file.
+
+----
+key1_${uuid}#{"qux":42}#{"foo":"bar","baz":42}
+----
+
+The key is the first part, then the value, and finally the headers.
 
 === Assertions
 
-ifeval::[{safe-mode-level} < 20]
+As mentioned before, the records that are read are parsed as JSON, no matter the original format, and can be read using https://github.com/json-path/JsonPath[JsonPath DSL^]
+
+Let's say this is your data :
+
+[source,language=json]
+----
+{
+    "foo": "fooString",
+    "fooInt": 42,
+    "foos": [
+        "item1",
+        "item2",
+        "item3"
+    ],
+    "qux": [
+        {
+            "key1": "toto"
+        },
+        {
+            "key2": "titi"
+        }
+    ],
+    "bar": {
+        "baz": [
+            "item1",
+            "item2",
+            "item3"
+        ]
+    }
+}
+----
+
+You can assert this json this way :
+
 [source,language=gherkin]
 ----
-include::src/test/resources/features/assertions.feature[]
-----
-endif::[]
-ifeval::[{safe-mode-level} >= 20]
-link:src/test/resources/features/assertions.feature[]
-endif::[]
+Then expected records
+    | topic_alias | key   | value  |
+    | topic_out   | key1  | aValue |
+  And assert aValue $.foo == "fooString"
+  And assert aValue $.fooInt == 42
+  And assert aValue $.foos has size 3
+  And assert aValue $.foos == ["item1","item2","item3"]
+  And assert aValue $ match object {"foos":["item1","item2","item3"],"bar":{"baz":["item1","item2","item3"]}}
+  And assert aValue $ match object {"foos":["item1","item2","item3"]}
+  And assert aValue $ match object {"bar":{"baz":["item1","item2","item3"]}}
+  And assert aValue $.bar match object {"baz":["item1","item2","item3"]}
+  And assert aValue $.bar.baz[0] == "item1"
+  And assert aValue $ match exact object {"foo":"fooString","fooInt":42,"foos":["item1","item2","item3"],"qux":[{"key1":"toto"},{"key2":"titi"}],"bar":{"baz":["item1","item2","item3"]}}
+  And assert aValue $.bar match exact object {"baz":["item1","item2","item3"]}
+  And assert aValue $.qux[?(@.key1!=null)] match object {"key1":"toto"}
 
-=== Call functions
+----
+
+NOTE: The ``match object`` is useful to assert a subpart of a JSON as it will not check that the objects you are comparing are exactly the same.
+If you want to do that, you can use the ``match exact object``, that will check that both objects have the exact same fields (even if they are not ordered).
+
+==== Headers
+
+You can assert headers as well, by adding the column ``headers`` in your expectations
+
+[source,language=gherkin]
+----
+Then expected records
+| topic_alias | key  | headers      | value  |
+| topic_out   | key1 | aliasHeaders | aValue |
+And assert aValue $ == 42
+And assert aliasHeaders $ == {"foo":"bar","baz":"42"}
+----
+
+The headers are parsed as a JSON object, so you can assert them like record values
+
+=== Variables and Functions
+
+==== Variables
+You can declare variables in your test using the keyword ``var`` in any ``Given`` context in the ``Background`` or in any ``Scenario``
+
+[source,language=gherkin]
+----
+  Background:
+    Given var fooInt = 42
+
+  Scenario: uuid
+    Given var foo = bar
+    And var foo2 = "bar" #same as foo
+----
+
+The variables you declare can be used in other part of your test. They can be accessed by using ``${var}``
+
+[source,language=gherkin]
+----
+Feature: variables
+
+  Background:
+
+    Given input topic
+      | topic        | alias     | key_type | value_type |
+      | topic-string | topic_in1 | string   | string     |
+
+    And output topic
+      | topic        | alias     | key_type | value_type | readTimeoutInSecond |
+      | topic-string | topic_out | string   | string     | 5                   |
+    And var uuid = foo1234
+
+  Scenario: variables
+    When records from file with  key  and  value  are sent
+      | topic_alias | separator | file                          |
+      | topic_in1   | #         | features/records/batch1.1.dat |
+    Then expected records
+      | topic_alias | key             | value |
+      | topic_out   | samekey_${uuid} | value |
+    And assert value $.FOO == 1_${uuid}
+----
+
+==== Functions
+
+There are some functions integrated in Kapoeira. You can call one by using the keyword ``call function`` inside a variable.
+
+You can pass arguments after calling the function, and arguments can be variables.
+[source,language=gherkin]
+----
+And var uuid = call function : uuid
+And var sleep = call function : sleep 5000
+And var sleepDuration = 10000
+And var sleepMore = call function : sleep ${sleepDuration}
+----
+
+Here is a list of the functions implemented :
+
+uuid:: retrieve an uuid
+print:: call a logger.info of the parameters
+now:: return OffsetDateTime.now().toString
+sleep:: call a thread.sleep. Argument is an int and duration is in milliseconds
+uppercase:: put the string in parameter in uppercase
+lowercase:: put the string in parameter in lowercase
+sha256:: encode a parameter using sha256
+sha1:: encode a parameter using sha1
 
 ifeval::[{safe-mode-level} < 20]
 [source,language=gherkin]
@@ -297,6 +539,22 @@ endif::[]
 
 === Call scripts
 
+You can call external script in your test using the keywords ``call script``. For now, only bash script are executed.
+
+[source,language=gherkin]
+----
+When call script : /features/scripts/runExternalTool.sh 42
+    And call script :
+    """
+    echo 42
+    """
+    And var myValue = call script : /features/scripts/runExternalTool.sh 43
+    And var myKey = call script :
+    """
+    echo 44
+    """
+----
+
 ifeval::[{safe-mode-level} < 20]
 [source,language=gherkin]
 ----
@@ -307,29 +565,27 @@ ifeval::[{safe-mode-level} >= 20]
 link:src/test/resources/features/call-external-script.feature[]
 endif::[]
 
-=== Produce & Consume Avro records
-
-ifeval::[{safe-mode-level} < 20]
-[source,language=gherkin]
-----
-include::src/test/resources/features/producer-avro-file-key-value.feature[]
-----
-endif::[]
-ifeval::[{safe-mode-level} >= 20]
-link:src/test/resources/features/producer-avro-file-key-value.feature[]
-endif::[]
-
 === Produce & Consume with batches
 
-ifeval::[{safe-mode-level} < 20]
+We introduced batches in Kapoeira to simulate ordered input data in topics.
+It can be useful when you want to test a stream join.
+You can specify in what order you push data in input topics and then control the output to assert.
+
+You can use the batches by using the column ``batch`` in your input data and output records. Then, use a number to choose the order to push/read data
 [source,language=gherkin]
 ----
-include::src/test/resources/features/batch-produce-consume.feature[]
+  Scenario: Produce records in multiple topics, using batch mode to keep order between consumption and production
+    When records from file with  key  and  value  are sent
+      | topic_alias | separator | file                        | batch |
+      | topic_in1   | #         | features/records/batch1.dat | 1     |
+      | topic_in2   | #         | features/records/batch2.dat | 2     |
+    Then expected records
+      | topic_alias | key             | value  | batch |
+      | topic_out   | samekey_${uuid} | value1 | 1     |
+      | topic_out   | samekey_${uuid} | value2 | 2     |
+    And assert value1 $.FOO == 1_${uuid}
+    And assert value2 $.ANINT == 4
 ----
-endif::[]
-ifeval::[{safe-mode-level} >= 20]
-link:src/test/resources/features/batch-produce-consume.feature[]
-endif::[]
 
 == Test Reports
 
@@ -343,3 +599,6 @@ Three output format are generated after every launch ;
 
 image::src/test/resources/report-kapo.png[]
 
+== Testing Batches
+
+TODO
