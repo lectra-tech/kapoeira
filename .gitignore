@@ -3,6 +3,7 @@
 .bsp
 .idea
 .metals
+.vscode
 target
 .$*
 .DS_Store
