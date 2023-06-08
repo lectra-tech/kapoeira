@@ -106,9 +106,12 @@ TODO TestContainers
 
 == How to use?
 
+=== Docker Hub images
+https://hub.docker.com/r/lectratech/kapoeira[^]
+
 === Manual Docker command
 
-.Draft
+.With latest Docker image available on Docker Hub
 [source,bash]
 ----
 docker run --rm -ti \
@@ -121,7 +124,7 @@ docker run --rm -ti \
     -e JAAS_AUTHENT=<true (default) | false> \
     -e LOGGING_LEVEL=<INFO (default) | ERROR | ...> \
     -e THREADS=<8 (default) | ... > \
-    <REGISTRY>/kapoeira:<VERSION>
+    lectratech/kapoeira
 ----
 
 [NOTE]
