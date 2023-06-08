@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.5_8-jdk as builder
+FROM eclipse-temurin:17.0.7_7-jdk as builder
 
 ENV SCALA_VERSION 2.13.10
 ENV SBT_VERSION 1.8.2
@@ -30,9 +30,9 @@ COPY version.txt .
 RUN sbt update
 COPY src/ ./src/
 RUN sbt clean coverageOn test coverageReport coverageOff
-RUN sbt "set test in assembly := {}" assembly
+RUN sbt "set assembly / test  := {}" assembly
 
-FROM eclipse-temurin:17.0.2_8-jre as release
+FROM eclipse-temurin:17-jre as release
 ENV KAFKA_BOOTSTRAP_SERVER "localhost:9092"
 ENV KAFKA_SCHEMA_REGISTRY_URL "http://localhost:8081"
 ENV KAFKA_USER "xxx-bot"
