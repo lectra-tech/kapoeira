@@ -15,6 +15,7 @@ image::docs/diagrams/kapoeira.png[]
 == Tooling
 
 * Written in scala 2.13
+* Built with SBT & Docker
 * Based on https://github.com/cucumber/cucumber-jvm-scala[Cucumber Scala^]
 * Uses specific Gherkin DSL
 * Supports Raw, Json and Avro payloads
@@ -70,6 +71,7 @@ Feature: upper-case
 
 After launching, a report is generated to synthesize the result :
 
+.Kapoeira HTML report
 image:docs/images/report.png[]
 
 
@@ -151,6 +153,7 @@ This is important, especially for kafka, has you will use topics, and maybe avro
 [source,language=gherkin]
 ----
 Background:
+  ... # background declarations
 ----
 
 ==== Input Topics
@@ -614,8 +617,19 @@ Three output format are generated after every launch ;
 * JSON
 * XML
 
+.Kapoeira HTML report
 image::src/test/resources/report-kapo.png[]
 
-== Testing Batches
+== Contributing
+link:CONTRIBUTING.adoc[]
 
+== Coding guidelines
+TODO (scalafmt, ...)
+
+== Code of Conduct
 TODO
+
+== Licensing
+The code is licensed under link:LICENSE[Apache License, Version 2.0^].
+
+The documentation and logo are licensed under link:cc-by-sa-4.0.LICENSE[Creative Commons Attribution-ShareAlike 4.0 International Public License^].
