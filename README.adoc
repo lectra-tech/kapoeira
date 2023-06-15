@@ -1,4 +1,4 @@
-= Kapoeira
+= image:docs/logos/kapoeira_logo_text.png["Kapoeira Logo", link="https://github.com/lectra-tech/kapoeira", align="center"]
 :toc: left
 :sectnums:
 
