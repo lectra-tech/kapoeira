@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
-  features = Array("classpath:features"),
+  features = Array("classpath:wip"),
   glue = Array("classpath:com.lectra.kapoeira.glue"),
   plugin = Array(
       "pretty",

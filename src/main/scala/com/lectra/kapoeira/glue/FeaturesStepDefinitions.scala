@@ -193,7 +193,7 @@ class FeaturesStepDefinitions
     )
   }
 
-  And("^call\\s+script\\s+:\\s+(.+)") { script: String =>
+  And("^call\\s+script\\s*:\\s+(.+)") { script: String =>
     val result = callScript(scriptFullPath(script))
     result.exitCode shouldBe 0
   }
