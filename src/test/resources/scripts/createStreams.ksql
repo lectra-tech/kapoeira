@@ -1,5 +1,5 @@
-CREATE STREAM aKsqlTest (id string key,foo VARCHAR) WITH (kafka_topic='topic-string', value_format='json', key_format='kafka');
-CREATE STREAM aKsqlAvroTest (id string key,aString VARCHAR,anInt int,anOptionalString VARCHAR) WITH (kafka_topic='topic-avrovalue', value_format='avro', value_avro_schema_full_name='com.lectra.kapoeira.Avrovaluev1', key_format='kafka' );
-CREATE STREAM mergeKsqlTest with (kafka_topic='topic-mergejson', value_format='json') as select a.id, a.foo as foo, b.anInt as anInt from aKsqlTest a inner join aKsqlAvroTest b within 2 hours on a.id = b.id;
-CREATE STREAM topicSimpleValue (id string key,value VARCHAR) WITH (kafka_topic='topic-simple-value', value_format='kafka', key_format='kafka');
-CREATE STREAM upperCaseStreamTest with (kafka_topic='topic-upper-case-string', value_format='kafka') as select id, UCASE(value) from topicSimpleValue;
+CREATE OR REPLACE STREAM aKsqlTest (id string key,foo VARCHAR) WITH (kafka_topic='topic-string', value_format='json', key_format='kafka');
+CREATE OR REPLACE STREAM aKsqlAvroTest (id string key,aString VARCHAR,anInt int,anOptionalString VARCHAR) WITH (kafka_topic='topic-avrovalue', value_format='avro', value_avro_schema_full_name='com.lectra.kapoeira.Avrovaluev1', key_format='kafka' );
+CREATE OR REPLACE STREAM mergeKsqlTest with (kafka_topic='topic-mergejson', value_format='json') as select a.id, a.foo as foo, b.anInt as anInt from aKsqlTest a inner join aKsqlAvroTest b within 2 hours on a.id = b.id;
+CREATE OR REPLACE STREAM topicSimpleValue (id string key,value VARCHAR) WITH (kafka_topic='topic-simple-value', value_format='kafka', key_format='kafka');
+CREATE OR REPLACE STREAM upperCaseStreamTest with (kafka_topic='topic-upper-case-string', value_format='kafka') as select id, UCASE(value) from topicSimpleValue;

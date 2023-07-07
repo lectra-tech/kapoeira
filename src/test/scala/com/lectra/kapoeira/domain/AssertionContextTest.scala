@@ -18,18 +18,21 @@
  */
 package com.lectra.kapoeira.domain
 
+import com.lectra.kapoeira.domain.AssertionContext.{HeadersValue, RecordValue}
 import com.lectra.kapoeira.domain.Services.RecordConsumer
 import com.lectra.kapoeira.kafka.KapoeiraProducer
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.scalamock.scalatest.MockFactory
+import org.scalatest
 import org.scalatest.GivenWhenThen
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.nio.charset.StandardCharsets
+import scala.util.{Failure, Success, Try}
 
 class AssertionContextTest
-    extends AnyFeatureSpec
+  extends AnyFeatureSpec
     with Matchers
     with GivenWhenThen
     with MockFactory {
@@ -40,7 +43,7 @@ class AssertionContextTest
     Scenario("IAE because of bad background") {
       Given("context")
       val backgroundContext = new BackgroundContext
-      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext,recordConsume,KapoeiraProducer.run _))
+      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext, recordConsume, KapoeiraProducer.run _))
 
       When("init AssertionContext")
       Then("IAE")
@@ -54,7 +57,7 @@ class AssertionContextTest
     Scenario("minimum data") {
       Given("minimal background")
       val backgroundContext = mock[BackgroundContext]
-      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext,recordConsume,KapoeiraProducer.run _))
+      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext, recordConsume, KapoeiraProducer.run _))
       val consumerRecord = new ConsumerRecord(
         "topic",
         0,
@@ -91,7 +94,7 @@ class AssertionContextTest
     Scenario("two topics, 1 key per topic") {
       Given("background with 2 topics")
       val backgroundContext = mock[BackgroundContext]
-      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext,recordConsume,KapoeiraProducer.run _))
+      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext, recordConsume, KapoeiraProducer.run _))
       val recordWithHeaders = new ConsumerRecord(
         "topic1",
         0,
@@ -169,11 +172,11 @@ class AssertionContextTest
       assertionContext.expectedRecordsByTopicByKey shouldBe Map(
         "" +
           "topic1" -> Map(
-            "key1" -> Seq(
-              expectedConsumedRecords.head,
-              expectedConsumedRecords(2)
-            )
-          ),
+          "key1" -> Seq(
+            expectedConsumedRecords.head,
+            expectedConsumedRecords(2)
+          )
+        ),
         "topic2" -> Map("key2" -> Seq(expectedConsumedRecords(1)))
       )
       assertionContext.consumedRecordsByTopicByKey shouldBe Map(
@@ -196,10 +199,80 @@ class AssertionContextTest
       )
     }
 
+    Scenario("No header alias nor value alias found") {
+      Given("background with 2 topics")
+      val backgroundContext = mock[BackgroundContext]
+      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext, recordConsume, KapoeiraProducer.run _))
+      val recordWithHeaders = new ConsumerRecord(
+        "topic2",
+        0,
+        0,
+        "key2",
+        "value1.2".getBytes.asInstanceOf[Any]
+      )
+      recordWithHeaders
+        .headers()
+        .add("foo", """"bar"""".getBytes(StandardCharsets.UTF_8))
+      val consumerRecords2 = Seq(
+        recordWithHeaders,
+        new ConsumerRecord(
+          "topic2",
+          0,
+          1,
+          "key2",
+          "value1.2".getBytes.asInstanceOf[Any]
+        )
+      )
+      val expectedConsumedRecords = List(
+        KeyValueWithAliasesRecord(
+          "topic1",
+          "key1",
+          "alias_value1.1",
+          Some("aliasHeaders1.1")
+        ),
+        KeyValueWithAliasesRecord(
+          "topic2",
+          "key2",
+          "alias_value1.2",
+          Some("aliasHeaders1.2")
+        )
+      )
+
+      (backgroundContext
+        .consumeTopic(_: String, _: Map[String, Int])(_: RecordConsumer))
+        .expects("topic1", *, *)
+        .returning(Map())
+      (backgroundContext
+        .consumeTopic(_: String, _: Map[String, Int])(_: RecordConsumer))
+        .expects("topic2", *, *)
+        .returning(Map("key2" -> consumerRecords2))
+
+      When("init AssertionContext")
+      assertionContext.launchConsumption(
+        expectedConsumedRecords
+      )
+
+      Then("extracting consumed record by headers alias")
+      Try(assertionContext.extractConsumedRecordWithAlias("alias_value1.1")) match {
+        case Failure(exception) => exception.getMessage shouldEqual "Alias alias_value1.1 not found in header alias context and Expected key key1 with alias_value1.1 or aliasHeaders1.1 alias not found in Map()"
+        case Success(_) => fail("an exception should have been thrown")
+      }
+      Try(assertionContext.extractConsumedRecordWithAlias("alias_value1.2")) match {
+        case Failure(exception) => fail(exception)
+        case Success(Some(RecordValue(_))) => scalatest.Assertions.succeed
+        case v => fail(v.toString)
+      }
+      Try(assertionContext.extractConsumedRecordWithAlias("aliasHeaders1.2")) match {
+        case Failure(exception) => fail(exception)
+        case Success(Some(HeadersValue(_))) => scalatest.Assertions.succeed
+        case v => fail(v.toString)
+      }
+    }
+
     Scenario("1 topic, 2 keys") {
       Given("background with 1 topic")
       val backgroundContext = mock[BackgroundContext]
-      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext,recordConsume,KapoeiraProducer.run _))
+      val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext, recordConsume, KapoeiraProducer.run _))
       val consumerRecordsKey1 = Seq(
         new ConsumerRecord(
           "topic1",

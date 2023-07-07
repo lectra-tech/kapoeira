@@ -20,31 +20,31 @@ package com.lectra.kapoeira.domain
 
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import zio.Task
+import zio.{Has, Task, ZIO}
 
 object Services {
 
   trait OutputConfigFactory {
     def apply(
-        outputTopicConfig: OutputTopicConfig,
-        subjectConfigs: Map[String, SubjectConfig]
-    ): OutputConfig
+               outputTopicConfig: OutputTopicConfig,
+               subjectConfigs: Map[String, SubjectConfig]
+             ): OutputConfig
   }
 
   trait RecordConsumer {
     def apply(
-        outputConfig: OutputConfig,
-        expectedKeys: Map[String, Int]
-    ): Map[String, Seq[ConsumerRecord[String, Any]]]
+               outputConfig: OutputConfig,
+               expectedKeys: Map[String, Int]
+             ): Map[String, Seq[ConsumerRecord[String, Any]]]
   }
 
   trait RecordProducer {
     def run(
-        record: RecordRead,
-        topicConfig: TopicConfig,
-        keySubjectConfig: Option[SubjectConfig],
-        valueSubjectConfig: Option[SubjectConfig]
-    ): Task[Unit]
+             record: RecordRead,
+             topicConfig: TopicConfig,
+             keySubjectConfig: Option[SubjectConfig],
+             valueSubjectConfig: Option[SubjectConfig]
+           ): Task[Unit]
   }
 
   trait CloseConsumer {
@@ -57,5 +57,21 @@ object Services {
 
   trait ReadHeaders[T] {
     def readHeaders(t: T): Map[String, Any]
+  }
+
+  trait ZLogger {
+    def info(message: String): Task[Unit]
+
+    def debug(message: String): Task[Unit]
+
+    def warn(message: String): Task[Unit]
+  }
+  object ZLogger{
+
+    def info(message: String): ZIO[Has[ZLogger], Throwable, Unit] = ZIO.accessM[Has[ZLogger]](_.get.info(message))
+
+    def debug(message: String): ZIO[Has[ZLogger], Throwable, Unit] = ZIO.accessM[Has[ZLogger]](_.get.debug(message))
+
+    def warn(message: String): ZIO[Has[ZLogger], Throwable, Unit] = ZIO.accessM[Has[ZLogger]](_.get.warn(message))
   }
 }

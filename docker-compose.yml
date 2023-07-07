@@ -138,7 +138,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./src/test/resources/features:/features
+      - ./src/test/resources/wip:/wip
       - ./target/reports:/reports
+      - /tmp/kapoeira:/tmp/kapoeira
     env_file:
       - local.env
     networks:
