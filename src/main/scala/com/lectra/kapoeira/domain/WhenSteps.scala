@@ -31,9 +31,9 @@ final case class WhenStep(toRun: Map[Int, WhenStepRuntime[Unit]]) {
     toRun.merge(other)
   )
 
-  def addStepOnLastBatch(script: WhenStepRuntime[Unit]): WhenStep = {
+  def addStepOnLastBatch(step: WhenStepRuntime[Unit]): WhenStep = {
     val currentBatch = this.toRun.keys.max
-    this.copy(toRun = toRun.merge(Map(currentBatch -> script)))
+    this.copy(toRun = toRun.merge(Map(currentBatch -> step)))
   }
 
   def orderedBatchesToRun[V](
@@ -99,9 +99,10 @@ final case class WhenStepsLive(
 
     val expectedRecordByBatch: Map[Int, List[KeyValueWithAliasesRecord]] = expectedRecords.groupBy(_.batch)
     whenStep
-      .orderedBatchesToRun { case (batchNumber, toRun) =>
+      .orderedBatchesToRun { case (batchNumber, productionStep) =>
         val topicsForABatch = expectedRecordByBatch.get(batchNumber).toList.flatten.map(_.topicAlias).distinct
-        toRun *> ZIO.foreachPar(topicsForABatch) { topicAlias =>
+        //launch production of records by batch, then parallelizing await for expected records by topic by batch
+        ZLogger.info(s"Producing on batch $batchNumber") *> productionStep *> ZIO.foreachPar(topicsForABatch) { topicAlias =>
           ZIO.effect(
             topicAlias -> allKeys.get(batchNumber)
               .map(keysForBatch => backgroundContext.consumeTopic(topicAlias, keysForBatch)(recordConsumer))
@@ -137,7 +138,7 @@ final case class WhenStepsLive(
                   topicConfig,
                   backgroundContext.subjectConfigs.get(topicConfig.keyType),
                   backgroundContext.subjectConfigs.get(topicConfig.valueType)
-                )
+                ) *> ZLogger.info(s"Record produced: ${record.toString}")
               case None =>
                 ZIO.fail(
                   new IllegalArgumentException(

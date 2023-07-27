@@ -6,7 +6,7 @@ Feature: call-external-script
       | topic-string | topic_in | string   | string     |
     And output topic
       | topic        | alias     | key_type | value_type | readTimeoutInSecond |
-      | topic-string | topic_out | string   | string     | 10                   |
+      | topic-string | topic_out | string   | string     | 10                  |
     And var uuid = call function: uuid
 
   Scenario: call-scripts
@@ -30,12 +30,30 @@ Feature: call-external-script
   that produces back to kafka.
 
     When records with key and value are sent
-      | topic_alias | key              | value     |
-      | topic_in    | aTestKey_${uuid} | someValue |
+      | topic_alias | key              | value     | batch |
+      | topic_in    | aTestKey_${uuid} | someValue | 1     |
     And call script: /features/scripts/externalEffectProducingToKafka.sh send topic-string aTestKey2_${uuid}#producedByExternalSystem_${uuid}
     Then expected records
-      | topic_alias | key              | value   |
-      | topic_out   | aTestKey_${uuid} | aValue1 |
-      | topic_out   | aTestKey2_${uuid} | aValue2 |
+      | topic_alias | key               | value   | batch |
+      | topic_out   | aTestKey_${uuid}  | aValue1 | 1     |
+      | topic_out   | aTestKey2_${uuid} | aValue2 | 1     |
     And assert aValue1 $ == "someValue"
     And assert aValue2 $ == "producedByExternalSystem_${uuid}"
+
+  Scenario: call script after sending events in multiple batches
+  It should produce three records : two directly from Kapoeira, and another one from an interaction with an external system
+  that produces back to kafka in the last batch declared.
+
+    When records with key and value are sent
+      | topic_alias | key               | value     | batch |
+      | topic_in    | aTestKey3_${uuid} | someValue | 1     |
+      | topic_in    | aTestKey3_${uuid} | someValue | 2     |
+    And call script: /features/scripts/externalEffectProducingToKafka.sh send topic-string aTestKey4_${uuid}#producedByExternalSystem_${uuid}
+    Then expected records
+      | topic_alias | key               | value   | batch |
+      | topic_out   | aTestKey3_${uuid} | aValue1 | 1     |
+      | topic_out   | aTestKey3_${uuid} | aValue2 | 2     |
+      | topic_out   | aTestKey4_${uuid} | aValue3 | 2     |
+    And assert aValue1 $ == "someValue"
+    And assert aValue2 $ == "someValue"
+    And assert aValue3 $ == "producedByExternalSystem_${uuid}"

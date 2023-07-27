@@ -125,9 +125,11 @@ class FeaturesStepDefinitions
   When("^records\\s+with\\s+key\\s+and\\s+value\\s+are\\s+sent\\s*$") {
     records: DataTable =>
       val batches = parseKeyValueDataTable(records)
-        .map(_.read)
-        .map(_.interpolate(backgroundContext))
-      assertionContext.registerWhen(List((0, batches)))
+        .map(r=>(
+          r.batch,
+          List(r.read.interpolate(backgroundContext))
+        ))
+      assertionContext.registerWhen(batches)
   }
 
   // CONSUME

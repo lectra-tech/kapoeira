@@ -116,9 +116,10 @@ final class AssertionContext(
           case (_, _) =>
             Left(s"Aliases ${record} was not declared in dataTable.")
         }
-      case (_, _) =>
+      case (None,_) => Left(s"Topic alias ${record.topicAlias} not declared.")
+      case (expectedRecords, consumedRecords) =>
         Left(
-          s"Topic alias ${record.topicAlias} was not declared in background."
+          s"For record ${record.toString} :\nexpecting records:\n${expectedRecords.toString}\nbut have consumed\n${consumedRecords.toString}"
         )
     }
   }

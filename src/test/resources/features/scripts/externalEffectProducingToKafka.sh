@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -euxo pipefail
 SCRIPTNAME=$(basename "$0")
 RUNDIR=$(dirname "$(realpath $0)")
 CP_IMAGE_NAME=confluentinc/cp-kafka-connect-base:7.1.1
@@ -31,7 +30,7 @@ function send {
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v tmpFileVolume:/tmp/kapoeira \
     --entrypoint bash bash $RUNDIR/$SCRIPTNAME generateInput $tmpFile $writeTofile
-  docker run --rm --name externalEffectProductingToKafka \
+  docker run --rm \
     --volumes-from kapoeira-it \
     -v tmpFileVolume:/tmp/kapoeira \
     -v /var/run/docker.sock:/var/run/docker.sock \

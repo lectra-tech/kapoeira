@@ -206,7 +206,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
                 KeyValueWithAliasesRecord(aTopicAlias, aKey, "valueAlias2", None, 1),
                 KeyValueWithAliasesRecord(aTopicAlias, aKey, "valueAlias3", None, 2),
                 KeyValueWithAliasesRecord(aTopicAlias, aKey, "valueAlias4", None, 2),
-                KeyValueWithAliasesRecord(aTopicAlias, aKey, "valueAlias5", None, 3)
+                KeyValueWithAliasesRecord(aTopicAlias, aKey, "valueAlias5", None, 2)
               )
             )
             .map(_.map { case (t, vs) =>
