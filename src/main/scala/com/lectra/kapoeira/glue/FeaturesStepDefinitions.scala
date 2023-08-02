@@ -18,10 +18,9 @@
  */
 package com.lectra.kapoeira.glue
 
-import ammonite.ops.ImplicitWd._
-import ammonite.ops._
+import com.lectra.kapoeira.domain.CallScript._
 import com.lectra.kapoeira.domain.functions.DefaultFunctionRepository
-import com.lectra.kapoeira.domain.{AssertionContext, BackgroundContext, WhenStepsLive}
+import com.lectra.kapoeira.domain.{AssertionContext, BackgroundContext, CallScript, WhenStepsLive}
 import com.lectra.kapoeira.glue.Asserts.{JsonExpr, JsonNodeOps}
 import com.lectra.kapoeira.glue.DataTableParser._
 import com.lectra.kapoeira.kafka.KapoeiraProducer
@@ -29,9 +28,6 @@ import com.typesafe.scalalogging.LazyLogging
 import io.cucumber.datatable.DataTable
 import io.cucumber.scala.{EN, ScalaDsl}
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.Assertions._
-
-import scala.util.{Failure, Success, Try}
 
 class FeaturesStepDefinitions
     extends ScalaDsl
@@ -129,9 +125,11 @@ class FeaturesStepDefinitions
   When("^records\\s+with\\s+key\\s+and\\s+value\\s+are\\s+sent\\s*$") {
     records: DataTable =>
       val batches = parseKeyValueDataTable(records)
-        .map(_.read)
-        .map(_.interpolate(backgroundContext))
-      assertionContext.registerWhen(List((0, batches)))
+        .map(r=>(
+          r.batch,
+          List(r.read.interpolate(backgroundContext))
+        ))
+      assertionContext.registerWhen(batches)
   }
 
   // CONSUME
@@ -154,66 +152,25 @@ class FeaturesStepDefinitions
   }
 
   // CALL EXTERNAL TOOLING
-  private def callScript(script: String) = {
-    Try(
-      %%(script.split(" ").map(backgroundContext.substituteVariablesIn).toList)
-    ) match {
-      case Success(commandResult) =>
-        val result = ScriptResult.from(commandResult);
-        logger.debug(s"$result");
-        result
-      case Failure(e: ShelloutException) =>
-        val result = ScriptResult.from(e.result);
-        logger.error(s"$result");
-        result
-    }
-  }
-
-  private def scriptFullPath(script: String) = {
-    Try(System.getProperty("user.dir"))
-      .map {
-        case null => ""
-        case s    => s.trim
-      }
-      .fold(
-        _ => script,
-        { baseDir =>
-          if (script.startsWith("/")) script else s"$baseDir/$script"
-        }
-      )
-  }
-
-  final case class ScriptResult(exitCode: Int, stdOut: String, stdErr: String)
-
-  object ScriptResult {
-    def from(commandResult: CommandResult) = ScriptResult(
-      commandResult.exitCode,
-      commandResult.out.string.trim,
-      commandResult.err.string.trim
-    )
-  }
-
-  And("^call\\s+script\\s+:\\s+(.+)") { script: String =>
-    val result = callScript(scriptFullPath(script))
-    result.exitCode shouldBe 0
+  When("^call\\s+script\\s*:\\s+(.+)") { script: String =>
+    assertionContext.registerWhenScript(CallScriptPath(script))
   }
 
   And("^var\\s+(.*)\\s+=\\s+call\\s+script\\s*:\\s+(.+)$") {
     (variableName: String, script: String) =>
-      val result = callScript(scriptFullPath(script))
+      val result = CallScriptPath(script).run(backgroundContext)
       result.exitCode shouldBe 0
       backgroundContext.addVariable(variableName, result.stdOut)
   }
 
   //DOCSTRING version
-  And("^call\\s+script\\s+:") { script: String =>
-    val result = callScript(script)
-    result.exitCode shouldBe 0
+  When("^call\\s+script\\s+:") { script: String =>
+    assertionContext.registerWhenScript(CallPlainScript(script))
   }
 
   And("^var\\s+(.*)\\s+=\\s+call\\s+script\\s*:$") {
     (variableName: String, script: String) =>
-      val result = callScript(script)
+      val result = CallPlainScript(script).run(backgroundContext)
       result.exitCode shouldBe 0
       backgroundContext.addVariable(variableName, result.stdOut)
   }
