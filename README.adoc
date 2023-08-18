@@ -621,6 +621,8 @@ Three output format are generated after every launch ;
 image::src/test/resources/report-kapo.png[]
 
 == Contributing
+This repository is currently in incubation and not yet ready for contributions.
+
 link:CONTRIBUTING.adoc[]
 
 == Coding guidelines
