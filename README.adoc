@@ -89,7 +89,19 @@ docker build -t kapoeira:latest .
 .start local infra and run integration tests
 [source,bash]
 ----
+docker compose --profile test up -d
+----
+
+.start local infra only
+[source,bash]
+----
 docker compose up -d
+----
+
+.start tests only
+[source,bash]
+----
+docker compose run --rm --name kapoeira-it kapoeira
 ----
 
 .stop local infra
