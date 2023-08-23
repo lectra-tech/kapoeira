@@ -6,6 +6,7 @@ name: Docker
 # documentation.
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
    # Publish semver tags as releases.
@@ -19,6 +20,7 @@ env:
   # github.repository as <account>/<repo>
   #  IMAGE_NAME: ${{ github.repository }}
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/kapoeira
+  TEST_TAG: local/kapoeira:test
 
 jobs:
   build:
@@ -68,13 +70,35 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
+      - name: Build and export Docker image
+        id: build-and-test
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: ${{ env.TEST_TAG }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Launch the stack
+        run: |
+          docker compose up -d
+
+      - name: Test
+        run: |
+          docker compose run --rm --name kapoeira-it kapoeira
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
       - name: Build and push Docker image
+        if: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
         id: build-and-push
         uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: ${{ (github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
+          push: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -86,7 +110,7 @@ jobs:
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
       - name: Sign the published Docker image
-        if: ${{ (github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
+        if: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
         env:
           COSIGN_EXPERIMENTAL: "true"
         # This step uses the identity token to provision an ephemeral certificate
