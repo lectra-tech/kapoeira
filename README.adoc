@@ -12,6 +12,9 @@ Kapoeira has been developed for this purpose.
 
 image::docs/diagrams/kapoeira.png[]
 
+* https://tech-blog.lectra.com/article/795-discover-kapoeira-our-open-source-solution-test-kafka-streams[Presentation of Kapoeira in Lectra tech blog]
+* https://jvauchel.github.io/kapoeira-dance/[Presentation of Kapoeira in conferences]
+
 == Tooling
 
 * Written in scala 2.13
