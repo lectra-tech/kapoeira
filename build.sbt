@@ -22,8 +22,8 @@ lazy val root = (project in file("."))
   .settings(
     name := "kapoeira",
     // confluent
-    libraryDependencies += "io.confluent" % "kafka-avro-serializer" % "7.2.2" exclude("javax.ws.rs", "javax.ws.rs-api"),
-    libraryDependencies += "io.confluent" % "kafka-json-schema-serializer" % "7.2.2" exclude("javax.ws.rs", "javax.ws.rs-api"),
+    libraryDependencies += "io.confluent" % "kafka-avro-serializer" % "7.2.7" exclude("javax.ws.rs", "javax.ws.rs-api"),
+    libraryDependencies += "io.confluent" % "kafka-json-schema-serializer" % "7.2.7" exclude("javax.ws.rs", "javax.ws.rs-api"),
     // more libs to include
     // https://github.com/confluentinc/schema-registry/blob/master/pom.xml
     libraryDependencies += "org.apache.kafka" %% "kafka" % "3.2.3",
