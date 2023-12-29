@@ -1,4 +1,4 @@
-name: Docker Build for Contributors
+name: Docker Build for PR
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -47,7 +47,7 @@ jobs:
         run: |
           docker compose up -d
 
-      - name: Test
+      - name: Integration tests
         run: |
           docker compose run --rm --name kapoeira-it kapoeira
 
