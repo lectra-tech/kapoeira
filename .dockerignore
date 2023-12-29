@@ -9,5 +9,6 @@ targetAVSC
 *.pem
 project/project
 .bsp
-doc/
-.git/
+docs
+.git
+.github
