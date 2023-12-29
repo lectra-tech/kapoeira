@@ -1,16 +1,43 @@
 = Contributing
+:toc:
+:sectnums:
+:icons: font
 
 == Introduction
 
-You can contribute to [Kapoeira](https://github.com/lectra-tech/kapoeira) via
-[pull requests](https://help.github.com/articles/about-pull-requests/) filed.
+You can contribute to https://github.com/lectra-tech/kapoeira[Kapoeira^] via
+https://help.github.com/articles/about-pull-requests/[pull requests^] filed.
+
+== Workflow for a contributor
+* Create a fork, named `kapoeira`, on your namespace : copy the `main` branch only
+* Enable Github actions on this new repository for local ci operations : https://github.com/<your-namespace>/kapoeira/actions[^]
+* Do your changes in the code!
+* If your modifications are on the `main` branch, link:.github/workflows/docker-publish-when-release.yml[] is launched : unit & integration tests
+* If you create a https://semver.org/[SemVer^] Github release, like `vX.Y.Z`, link:.github/workflows/docker-publish-when-release.yml[] is launched again, completed with a docker image publishing on ghcr.io
+
+.Get your new Docker image for more tests on your side
+[source,bash]
+----
+docker pull ghcr.io/<your-namespace>/kapoeira:<X.Y.Z>
+----
+
+* Create a pull request on this repository and on its `main` branch : link:.github/workflows/docker-contrib.yml[] is launched : unit & integration tests
+* If a Kapoeira maintainer accepts this pull request and make a new release `vA.B.C`, your code will be available in the future Docker image on docker.io (https://hub.docker.com/r/lectratech/kapoeira/tags[DockerHub^])
+
+.Get a Kapoeira Docker image having version A.B.C
+[source,bash]
+----
+docker pull lectratech/kapoeira:<A.B.C>
+----
+
+NOTE: `latest` version is also available
 
 == Signing off each Commit
 
 As part of filing a pull request we ask you to sign off the
-[Developer Certificate of Origin](https://developercertificate.org/) (DCO) in each commit.
+https://developercertificate.org/[Developer Certificate of Origin^] (DCO) in each commit.
 Any Pull Request with commits that are not signed off will be reject by the
-[DCO check](https://probot.github.io/apps/dco/).
+https://probot.github.io/apps/dco/[DCO check^].
 
 A DCO is lightweight way for a contributor to confirm that they wrote or otherwise have the right
 to submit code or documentation to a project. Simply add `Signed-off-by` as shown in the example below
@@ -18,32 +45,29 @@ to indicate that you agree with the DCO.
 
 Example for a commit message with a sign-off:
 
+[source]
 ----
     doc(readme.adoc): Align sample code
 
-    Signed-off-by: John Doe <john.doe@lectra.com>
+    Signed-off-by: John Doe <john.doe@example.com>
 ----
 
 Git has the `-s` option (lower case) for `commit` that can sign off a commit for you, see example below:
 
-`$ git commit -s -m 'doc(readme.adoc): Align sample code'`
-
+[source,bash]
+----
+git commit -s -m 'doc(readme.adoc): Align sample code'
+----
 
 == Git History
-
-TODO
-
-- [Ensure that your commit messages will make your mom proud](https://www.robertcooper.me/git-commit-messages) 
-- [See what is done on ORT](https://github.com/oss-review-toolkit/.github/blob/main/CONTRIBUTING.md#git-history)
+* https://www.robertcooper.me/git-commit-messages[Ensure that your commit messages will make your mom proud^]
+* https://github.com/oss-review-toolkit/.github/blob/main/CONTRIBUTING.md#git-history[See what is done on ORT^]
 
 
 == Coding Conventions
-
-TODO
-- code organization
-- format
-
-
+TODO::
+* code organization
+* format
 
 
 Thank you for reading and happy contributing!
