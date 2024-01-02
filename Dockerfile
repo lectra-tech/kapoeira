@@ -1,7 +1,7 @@
-FROM eclipse-temurin:17.0.7_7-jdk as builder
+FROM eclipse-temurin:17.0.9_9-jdk as builder
 
-ENV SCALA_VERSION 2.13.10
-ENV SBT_VERSION 1.8.2
+ENV SCALA_VERSION 2.13.12
+ENV SBT_VERSION 1.9.8
 
 # Install tools...
 WORKDIR /opt/tools
@@ -31,6 +31,7 @@ RUN sbt update
 COPY src/ ./src/
 RUN sbt clean coverageOn test coverageReport coverageOff
 RUN sbt "set assembly / test  := {}" assembly
+RUN sbt dependencyUpdatesReport
 
 FROM eclipse-temurin:17-jre as release
 ENV KAFKA_BOOTSTRAP_SERVER "localhost:9092"

@@ -19,15 +19,12 @@
 package com.lectra.kapoeira.domain
 
 import com.lectra.kapoeira.domain.Services.{RecordConsumer, RecordProducer}
-import com.lectra.kapoeira.logging.ZLoggerTypesafe
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import zio.ZIO
 import zio.test.Assertion._
-import zio.test.{DefaultRunnableSpec, _}
+import zio.test.{ZIOSpecDefault, _}
 
-import scala.collection.immutable.List
-
-object WhenStepsSpec extends DefaultRunnableSpec {
+object WhenStepsSpec extends ZIOSpecDefault {
 
   val aTopic = "aTopic"
   val aTopic2 = "aTopic2"
@@ -36,7 +33,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
 
   val spec = suite("Handle run of when steps")(
     suite("sending record, and consume")(
-      testM("one record") {
+      test("one record") {
         //prepare
         val aValue = "aValue"
 
@@ -72,7 +69,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
           assert(res(aTopicAlias)(aKey))(hasSameElements(Seq(aValue)))
           )
       },
-      testM("one batch of many records, received in order") {
+      test("one batch of many records, received in order") {
         //prepare
         val backgroundContext: BackgroundContext = buildBackgroundContext
         val kafkaStubb = new KafkaStubb
@@ -116,7 +113,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
           )
           )
       },
-      testM("two batches of many records, received in order") {
+      test("two batches of many records, received in order") {
         //prepare
         val backgroundContext: BackgroundContext = buildBackgroundContext
         val kafkaStubb = new KafkaStubb
@@ -165,7 +162,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
             )
           )
       },
-      testM("register a generic step that will send a record too") {
+      test("register a generic step that will send a record too") {
         //prepare
         val backgroundContext: BackgroundContext = buildBackgroundContext
         val kafkaStubb = new KafkaStubb
@@ -222,7 +219,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
             )
           )
       },
-      testM("register a CallScript object") {
+      test("register a CallScript object") {
         //prepare
         val backgroundContext: BackgroundContext = buildBackgroundContext
         val kafkaStubb = new KafkaStubb
@@ -274,7 +271,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
           )
       }
     )
-  ).provideCustomLayer(ZLoggerTypesafe.layer)
+  )
 
   final class KafkaStubb {
     var records: Map[String, Seq[ConsumerRecord[String, Any]]] = Map.empty
@@ -286,7 +283,7 @@ object WhenStepsSpec extends DefaultRunnableSpec {
     }
 
     def producer(): RecordProducer = (record, topicConfig, _, _) =>
-      ZIO.effectTotal {
+      ZIO.succeed {
         records = records.updated(
           record.key,
           records

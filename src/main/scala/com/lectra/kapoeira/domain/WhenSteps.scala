@@ -19,7 +19,7 @@
 package com.lectra.kapoeira.domain
 
 import com.lectra.kapoeira.domain.MergeMaps._
-import com.lectra.kapoeira.domain.Services.{RecordConsumer, RecordProducer, ZLogger}
+import com.lectra.kapoeira.domain.Services.{RecordConsumer, RecordProducer}
 import com.lectra.kapoeira.domain.WhenStep.WhenStepRuntime
 import com.lectra.kapoeira.domain.WhenSteps._
 import com.lectra.kapoeira.glue.ConsoleTimer
@@ -43,7 +43,7 @@ final case class WhenStep(toRun: Map[Int, WhenStepRuntime[Unit]]) {
 }
 
 object WhenStep {
-  type WhenStepRuntime[A] = ZIO[Has[ZLogger], Throwable, A]
+  type WhenStepRuntime[A] = ZIO[Any, Throwable, A]
 
   def empty: WhenStep = WhenStep(Map(0 -> ZIO.unit))
 }
@@ -84,8 +84,8 @@ final case class WhenStepsLive(
   override def registerWhenScript(whenStep: WhenStep, callScript: CallScript): WhenStep =
     whenStep.addStepOnLastBatch {
       for {
-        result <- ZIO.effect(callScript.run(backgroundContext))
-        _ <- ZLogger.info(s"Call script result: ${result.toString}")
+        result <- ZIO.attempt(callScript.run(backgroundContext))
+        _ <- ZIO.logInfo(s"Call script result: ${result.toString}")
       } yield ()
     }
 
@@ -102,8 +102,8 @@ final case class WhenStepsLive(
       .orderedBatchesToRun { case (batchNumber, productionStep) =>
         val topicsForABatch = expectedRecordByBatch.get(batchNumber).toList.flatten.map(_.topicAlias).distinct
         //launch production of records by batch, then parallelizing await for expected records by topic by batch
-        ZLogger.info(s"Producing on batch $batchNumber") *> productionStep *> ZIO.foreachPar(topicsForABatch) { topicAlias =>
-          ZIO.effect(
+        ZIO.logInfo(s"Producing on batch $batchNumber") *> productionStep *> ZIO.foreachPar(topicsForABatch) { topicAlias =>
+          ZIO.attempt(
             topicAlias -> allKeys.get(batchNumber)
               .map(keysForBatch => backgroundContext.consumeTopic(topicAlias, keysForBatch)(recordConsumer))
               .getOrElse(Map.empty)
@@ -138,7 +138,7 @@ final case class WhenStepsLive(
                   topicConfig,
                   backgroundContext.subjectConfigs.get(topicConfig.keyType),
                   backgroundContext.subjectConfigs.get(topicConfig.valueType)
-                ) *> ZLogger.info(s"Record produced: ${record.toString}")
+                ) *> ZIO.logInfo(s"Record produced: ${record.toString}")
               case None =>
                 ZIO.fail(
                   new IllegalArgumentException(
