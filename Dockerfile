@@ -34,17 +34,18 @@ RUN sbt "set assembly / test  := {}" assembly
 RUN sbt dependencyUpdatesReport
 
 FROM eclipse-temurin:17-jre as release
-ENV KAFKA_BOOTSTRAP_SERVER "localhost:9092"
+ENV KAFKA_BOOTSTRAP_SERVERS "localhost:9092"
 ENV KAFKA_SCHEMA_REGISTRY_URL "http://localhost:8081"
-ENV KAFKA_USER "xxx-bot"
-ENV KAFKA_PASSWORD "XXX"
-ENV JAAS_AUTHENT "true"
-ENV CONSUMER_TIMOUT_MS 8000
-ENV CONSUMER_MAX_MESSAGES 100
-ENV DOCKER_API_VERSION 1.39
-ENV LOGGING_LEVEL "INFO"
+ENV KAFKA_USERNAME ""
+ENV KAFKA_PASSWORD ""
+
+ENV CONFIG_FILE "application.conf"
+# example KAPOEIRA_JAVA_SYSTEM_PROPERTIES="-Dkey1=value1 -Dkey2=value2"
+ENV KAPOEIRA_JAVA_SYSTEM_PROPERTIES ""
+ENV KAPOEIRA_LOGGING_LEVEL "INFO"
+ENV KAPOEIRA_THREADS 8
+
 ENV CUCUMBER_PUBLISH_QUIET "true"
-ENV THREADS 8
 
 ## DOCKER INSTALLATION
 RUN apt-get update && apt-get -y upgrade && apt-get -y install \
@@ -75,6 +76,7 @@ COPY --from=builder /root/target/scala-2.13/kapoeira.jar .
 COPY src/main/resources/entrypoint.sh .
 RUN chmod a+x entrypoint.sh
 
+VOLUME /conf
 VOLUME /features
 VOLUME /reports
 

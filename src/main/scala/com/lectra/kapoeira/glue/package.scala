@@ -97,7 +97,7 @@ package object glue extends LazyLogging with RecordReadImplicits {
       adminClient.deleteConsumerGroups(java.util.Arrays.asList(outputConfig.consumer.groupMetadata().groupId()))
     }
 
-  implicit val adminClient: AdminClient = KapoeiraAdmin.createClient
+  implicit val adminClient: AdminClient = KapoeiraAdmin.createClient()
 
   implicit val openFile: FileOpener = (filePath: String) => {
     logger.info(s"openFile($filePath)")

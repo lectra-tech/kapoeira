@@ -1,6 +1,11 @@
 = image:docs/logos/kapoeira_logo_text.jpg["Kapoeira Logo", link="https://github.com/lectra-tech/kapoeira", align="center"]
 :toc: left
 :sectnums:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
 
 Dockerized Integration test tool for Kafka Environment
 
@@ -126,28 +131,88 @@ TODO TestContainers
 === Docker Hub images
 https://hub.docker.com/r/lectratech/kapoeira[^]
 
-=== Manual Docker command
+=== Docker command
 
-.With latest Docker image available on Docker Hub
+.Minimal configuration calling the latest Docker image available on Docker Hub
 [source,bash]
 ----
 docker run --rm -ti \
     -v <PATH_TO_YOUR_FEATURES_FOLDER>:/features \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -e KAFKA_BOOTSTRAP_SERVER=<HOST:PORT[,HOST2:PORT2,HOST3:PORT3,...]> \
-    -e KAFKA_SCHEMA_REGISTRY_URL=<URL> \
-    -e KAFKA_USER=<XXX> \
-    -e KAFKA_PASSWORD=<****> \
-    -e JAAS_AUTHENT=<true (default) | false> \
-    -e LOGGING_LEVEL=<INFO (default) | ERROR | ...> \
-    -e THREADS=<8 (default) | ... > \
-    lectratech/kapoeira
+    -v <PATH_TO_YOUR_REPORTS_FOLDER>:/reports \
+    -e KAFKA_BOOTSTRAP_SERVERS=<HOST:PORT[,HOST2:PORT2,HOST3:PORT3,...]> \
+    lectratech/kapoeira:latest
 ----
 
-[NOTE]
+Available Docker volumes::
+* `/features`: root Kapoeira folder (sub-folders can be defined)
+* `/reports`: folder containing Junit generated reports (`kapoeira-report.html`, `kapoeira-report.json`, `kapoeira-report.xml`)
+* `/conf`: folder with extra configuration files
+* `/var/run/docker.sock` : docker-cli is installed in Kapoeira, so you can set `-v /var/run/docker.sock:/var/run/docker.sock` for calling Docker command into Kapoeira
+
+Available environment variables::
+* `KAFKA_BOOTSTRAP_SERVERS`: Kafka broker host & port list; default: `localhost:9092`
+* `KAFKA_SCHEMA_REGISTRY_URL`: Schema Registry URL for AVRO/Json Schema contents (on Record Key or Value); default: `http://localhost:8081`
+* `KAFKA_USERNAME`: Kafka broker username for configuration having user authentication; default: empty string
+* `KAFKA_PASSWORD`: Kafka broker password for configuration having user authentication; default: empty string
+* `KAFKA_CONSUMER_GROUP_ID`: Kafka consumer group id for any created consumers; it is only a prefix if `KAPOEIRA_CONSUMER_GROUP_ID_UNIQUE_SUFFIX` is set to `true`; default: `kapoeira`
+* `KAPOEIRA_CONSUMER_GROUP_ID_UNIQUE_SUFFIX`: Boolean for adding a unique suffix (`-<hostname>-<uuid>`) for each created consumer; default: `true`
+* `KAPOEIRA_THREADS`: number of threads used by Cucumber; default: `8`
+* `KAPOEIRA_LOGGING_LEVEL`: Logback level for Kapoeira logs; default: `INFO`
+* `KAPOEIRA_JAVA_SYSTEM_PROPERTIES`: for overriding any properties; default: empty string
+** Example: `-Dkafka.boostrap.servers=foo:9092 -Dkafka.consumer.group.id=bar`
+* `CONFIG_FILE`: file defining a set of Kafka (common/consumer/producer) properties (see: https://docs.confluent.io/platform/current/installation/configuration/index.html[here^] for available properties) or Kapoeira properties; default: `application.conf`
+** Available files (click on the file name for more details):
+*** link:src/main/resources/application.conf[`application.conf`^]: default one having no security configuration
+*** link:src/main/resources/application-sasl-plaintext-plain.conf[`application-sasl-plaintext-plain.conf`^]
+*** link:src/main/resources/application-sasl-plaintext-scram-sha256.conf[`application-sasl-plaintext-scram-sha256.conf`^]
+*** link:src/main/resources/application-sasl-plaintext-scram-sha512.conf[`application-sasl-plaintext-scram-sha512.conf`^]
+*** link:src/main/resources/application-sasl-ssl-plain.conf[`application-sasl-ssl-plain.conf`^]
+*** link:src/main/resources/application-sasl-ssl-scram-sha256.conf[`application-sasl-ssl-scram-sha256.conf`^]
+*** link:src/main/resources/application-sasl-ssl-scram-sha512.conf[`application-sasl-ssl-scram-sha512.conf`^]
+** You can create your own configuration file `application-custom.conf`, containing or not environment variables, like that:
+
+.Example of `application-custom.conf`
+[source, hocon]
+----
+include "application.conf"
+
+kafka {
+    # common properties
+    security.protocol = "..."
+    sasl.xxx = ${MY_ENV_VAR}
+    ...
+    # consumer properties
+    consumer {
+      ...
+    }
+    # producer properties
+    producer {
+      ...
+    }
+}
+
+----
+
+.How to call a custom configuration file
+[source,bash]
+----
+docker run --rm -ti \
+    -v <PATH_TO_YOUR_FEATURES_FOLDER>:/features \
+    -v <PATH_TO_YOUR_REPORTS_FOLDER>:/reports \
+    -v <PATH_TO_YOUR_CONF>:/conf \
+    -e KAFKA_BOOTSTRAP_SERVERS=<HOST:PORT[,HOST2:PORT2,HOST3:PORT3,...]> \
+    -e CONFIG_FILE=application-custom.conf \
+    -e MY_ENV_VAR=foo \
+    lectratech/kapoeira:latest
+----
+
+[IMPORTANT]
 ====
-* Volume mount on docker.sock only for calling docker command
-* KAFKA_SCHEMA_REGISTRY_URL only for AVRO content
+* `KAFKA_BOOTSTRAP_SERVER` is deprecated, use `KAFKA_BOOTSTRAP_SERVERS` instead
+* `KAFKA_USER` is deprecated, use `KAFKA_USERNAME` instead
+* `THREADS` is deprecated, use `KAPOEIRA_THREADS` instead
+* `LOGGING_LEVEL` is deprecated, use `KAPOEIRA_LOGGING_LEVEL` instead
+* `JAAS_AUTHENT` is no longer used
 ====
 
 == Syntax Guide

@@ -19,7 +19,6 @@
 package com.lectra.kapoeira.kafka
 
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import com.lectra.kapoeira.Config
 import com.lectra.kapoeira.Config._
 import com.lectra.kapoeira.domain.SubjectFormat.{Avro, Json}
 import com.lectra.kapoeira.domain._
@@ -27,13 +26,12 @@ import com.lectra.kapoeira.glue.RecordReadOps
 import com.typesafe.scalalogging.LazyLogging
 import io.confluent.kafka.schemaregistry.avro.{AvroSchema, AvroSchemaUtils}
 import io.confluent.kafka.schemaregistry.json.JsonSchemaUtils
-import kafka.tools.ConsoleProducer
-import kafka.tools.ConsoleProducer.producerProps
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
-import org.apache.kafka.clients.producer.{Callback, KafkaProducer, ProducerRecord, RecordMetadata}
+import org.apache.kafka.clients.producer._
 import zio.{Scope, Task, ZIO}
 
+import java.util.Properties
 import scala.util.{Failure, Try}
 
 object KapoeiraProducer extends LazyLogging {
@@ -92,23 +90,17 @@ object KapoeiraProducer extends LazyLogging {
   ] = {
     ZIO
       .acquireRelease(ZIO.attempt {
-        val params = commonConfig(topicConfig) ::: (if (JAAS_AUTHENT) jaasConfig else Nil)
-        import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig}
-        val props = producerProps(new ConsoleProducer.ProducerConfig(params.toArray))
-        props.put(
-          ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-          Config.KAFKA_BROKER_LIST
-        )
-        props.put(
-          ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-          implicitly[DataType[K]].classSerializer
-        )
-        props.put(
-          ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-          implicitly[DataType[V]].classSerializer
-        )
-        props.put("schema.registry.url", Config.KAFKA_SCHEMA_REGISTRY_URL)
-        new KafkaProducer[Any, Any](props)
+        val kafkaParams = new Properties()
+        kafkaProducerProperties.foreach { case (key, value) =>
+          kafkaParams.put(key, value)
+        }
+        // specific options
+        kafkaParams.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, implicitly[DataType[K]].classSerializer)
+        kafkaParams.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, implicitly[DataType[V]].classSerializer)
+        kafkaParams.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
+        kafkaParams.put(ProducerConfig.ACKS_CONFIG, "1")
+        kafkaParams.put(ProducerConfig.RETRIES_CONFIG, "0")
+        new KafkaProducer[Any, Any](kafkaParams)
       }) { producer =>
         ZIO
           .attempt {
@@ -190,38 +182,6 @@ object KapoeiraProducer extends LazyLogging {
       })
     } yield ()
   }
-
-  private def commonConfig(
-                            topicConfig: TopicConfig
-                          ): List[String] =
-    List(
-      "--topic",
-      s"${topicConfig.topicName}",
-      "--broker-list",
-      s"$KAFKA_BROKER_LIST",
-      "--producer-property",
-      "max.in.flight.requests.per.connection=1",
-      "--producer-property",
-      "acks=1",
-      "--producer-property",
-      "retries=0",
-      "--property",
-      "parse.key=true"
-    )
-
-  private def jaasConfig(): List[String] =
-    List(
-      "--producer-property",
-      "sasl.mechanism=SCRAM-SHA-512",
-      "--producer-property",
-      "security.protocol=SASL_SSL",
-      "--property",
-      "security.protocol=SASL_SSL", // FIXME duplicate info?
-      "--property",
-      "sasl.mechanism=SCRAM-SHA-512",
-      "--producer-property",
-      s"""sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="$KAFKA_USER" password="$KAFKA_PASSWORD";"""
-    )
 
   object CustomCallback extends Callback {
     override def onCompletion(
