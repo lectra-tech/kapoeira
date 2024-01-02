@@ -26,7 +26,7 @@ import com.lectra.kapoeira.kafka.KapoeiraConsumer._
 import com.lectra.kapoeira.kafka.{KapoeiraAdmin, KapoeiraConsumer}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.admin.AdminClient
-import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer}
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
 
 import scala.io.Source

@@ -20,11 +20,10 @@ package com.lectra.kapoeira.domain
 
 import com.lectra.kapoeira.domain.AssertionContext.{HeadersValue, RecordExtraction, RecordValue}
 import com.lectra.kapoeira.exception.AssertException
-import com.lectra.kapoeira.logging.ZLoggerTypesafe
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.header.Headers
-import zio.Runtime
+import zio.{Runtime, Unsafe}
 
 final class AssertionContext(
                               val whenStepsLive: WhenSteps
@@ -73,9 +72,10 @@ final class AssertionContext(
       }
 
     // 3. consume by Topic and group by key =>  Map2[topic, Map[key, Seq[ConsumerRecord]]]
-    consumedRecordsByTopicByKey = Runtime.default
-      .unsafeRunSync(whenStepsLive.run(whenSteps, expectedRecords).provideCustomLayer(ZLoggerTypesafe.layer))
-      .fold(err => throw err.squash, identity)
+    consumedRecordsByTopicByKey =
+      Unsafe.unsafe { implicit unsafe =>
+        Runtime.default.unsafe.run(whenStepsLive.run(whenSteps, expectedRecords)).getOrThrow()
+      }
   }
 
   def extractConsumedRecordWithAlias(
@@ -116,7 +116,7 @@ final class AssertionContext(
           case (_, _) =>
             Left(s"Aliases ${record} was not declared in dataTable.")
         }
-      case (None,_) => Left(s"Topic alias ${record.topicAlias} not declared.")
+      case (None, _) => Left(s"Topic alias ${record.topicAlias} not declared.")
       case (expectedRecords, consumedRecords) =>
         Left(
           s"For record ${record.toString} :\nexpecting records:\n${expectedRecords.toString}\nbut have consumed\n${consumedRecords.toString}"

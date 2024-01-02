@@ -20,24 +20,25 @@ package com.lectra.kapoeira.domain
 
 import com.lectra.kapoeira.domain.MergeMaps._
 import zio.test.Assertion.{equalTo, hasSameElements}
-import zio.test.{Assertion, DefaultRunnableSpec, Gen, assert, check}
+import zio.test.{Assertion, Gen, assert, check}
+import zio.test.{ Gen, ZIOSpecDefault }
 
-object MergeMapsSpec extends DefaultRunnableSpec {
+object MergeMapsSpec extends ZIOSpecDefault {
   val spec = suite("merge Maps with Associative")(
     suite("sequences")(
-      testM("Merge sequences") {
+      test("Merge sequences") {
         check(
-          Gen.listOfBounded(1, 10)(Gen.anyInt),
-          Gen.listOfBounded(1, 10)(Gen.anyInt)
+          Gen.listOfBounded(1, 10)(Gen.int),
+          Gen.listOfBounded(1, 10)(Gen.int)
         ) { case (xs, ys) =>
           assert(xs.merge(ys))(Assertion.hasSameElements(xs ++ ys))
         }
       },
-      testM("associativity") {
+      test("associativity") {
         check(
-          Gen.listOfBounded(1, 10)(Gen.anyInt),
-          Gen.listOfBounded(1, 10)(Gen.anyInt),
-          Gen.listOfBounded(1, 10)(Gen.anyInt)
+          Gen.listOfBounded(1, 10)(Gen.int),
+          Gen.listOfBounded(1, 10)(Gen.int),
+          Gen.listOfBounded(1, 10)(Gen.int)
         ) { case (xs, ys, zs) =>
           //(xs + (ys + zs)) === ((xs + ys) + zs)
           assert(xs.merge(ys.merge(zs)))(equalTo((xs.merge(ys)).merge(zs)))
@@ -45,15 +46,15 @@ object MergeMapsSpec extends DefaultRunnableSpec {
       }
     ),
     suite("maps")(
-      testM("Merge maps of sequences") {
+      test("Merge maps of sequences") {
         check(
           Gen.mapOfBounded(1, 10)(
             Gen.elements("key1", "key2"),
-            Gen.listOfBounded(1, 10)(Gen.anyInt)
+            Gen.listOfBounded(1, 10)(Gen.int)
           ),
           Gen.mapOfBounded(1, 10)(
             Gen.elements("key2", "key3"),
-            Gen.listOfBounded(1, 10)(Gen.anyInt)
+            Gen.listOfBounded(1, 10)(Gen.int)
           )
         ) { case (xs, ys) =>
           assert(xs.merge(ys))(
@@ -70,19 +71,19 @@ object MergeMapsSpec extends DefaultRunnableSpec {
           )
         }
       },
-      testM("associativity") {
+      test("associativity") {
         check(
           Gen.mapOfBounded(1, 10)(
             Gen.elements("key1", "key2", "key3"),
-            Gen.listOfBounded(1, 10)(Gen.anyInt)
+            Gen.listOfBounded(1, 10)(Gen.int)
           ),
           Gen.mapOfBounded(1, 10)(
             Gen.elements("key1", "key2", "key3"),
-            Gen.listOfBounded(1, 10)(Gen.anyInt)
+            Gen.listOfBounded(1, 10)(Gen.int)
           ),
           Gen.mapOfBounded(1, 10)(
             Gen.elements("key1", "key2", "key3"),
-            Gen.listOfBounded(1, 10)(Gen.anyInt)
+            Gen.listOfBounded(1, 10)(Gen.int)
           )
         ) { case (xs, ys, zs) =>
           assert(xs.merge(ys.merge(zs)))(equalTo((xs.merge(ys)).merge(zs)))

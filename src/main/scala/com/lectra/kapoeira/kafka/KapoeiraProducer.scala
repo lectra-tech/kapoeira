@@ -32,7 +32,7 @@ import kafka.tools.ConsoleProducer.producerProps
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.kafka.clients.producer.{Callback, KafkaProducer, ProducerRecord, RecordMetadata}
-import zio.{Task, ZIO, ZManaged}
+import zio.{Scope, Task, ZIO}
 
 import scala.util.{Failure, Try}
 
@@ -85,13 +85,13 @@ object KapoeiraProducer extends LazyLogging {
 
   }
 
-  private def producer[K: DataType, V: DataType](topicConfig: TopicConfig): ZManaged[
-    Any,
+  private def producer[K: DataType, V: DataType](topicConfig: TopicConfig): ZIO[
+    Any with Scope,
     Throwable,
     KafkaProducer[Any, Any]
   ] = {
-    ZManaged
-      .make(ZIO.effect {
+    ZIO
+      .acquireRelease(ZIO.attempt {
         val params = commonConfig(topicConfig) ::: (if (JAAS_AUTHENT) jaasConfig else Nil)
         import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig}
         val props = producerProps(new ConsoleProducer.ProducerConfig(params.toArray))
@@ -111,11 +111,11 @@ object KapoeiraProducer extends LazyLogging {
         new KafkaProducer[Any, Any](props)
       }) { producer =>
         ZIO
-          .effect {
+          .attempt {
             producer.flush()
-            producer.close
+            producer.close()
           }
-          .catchAll(err => ZIO.effectTotal(err.printStackTrace()))
+          .catchAll(err => ZIO.succeed(err.printStackTrace()))
       }
   }
 
@@ -125,7 +125,7 @@ object KapoeiraProducer extends LazyLogging {
                              key: K,
                              headers: Map[String, Array[Byte]],
                              recordValue: V
-                           ): Task[Unit] = ZIO.effectAsync[Any, Throwable, Unit] { case callback =>
+                           ): Task[Unit] = ZIO.async[Any, Throwable, Unit] { case callback =>
     val record = new ProducerRecord[K, V](topic, key, recordValue)
     headers.foreach { case (k, v) =>
       record.headers().add(k, v)
@@ -149,7 +149,7 @@ object KapoeiraProducer extends LazyLogging {
          ): Task[Unit] = {
     for {
       headers <- ZIO.fromTry(record.jsonHeaders)
-      _ <- ((keySubjectConfig, valueSubjectConfig) match {
+      resource = ((keySubjectConfig, valueSubjectConfig) match {
         case (Some(keySubConf), Some(valueSubConf)) =>
           (keySubConf.format, valueSubConf.format) match {
             case (Avro, Avro) => producer[GenericData.Record, GenericData.Record] _
@@ -168,7 +168,8 @@ object KapoeiraProducer extends LazyLogging {
             case Json => producer[JsonNode, String] _
           }
         case _ => producer[String, String] _
-      })(topicConfig).use { producer =>
+      })(topicConfig)
+      _ <- ZIO.scoped(resource.flatMap { producer =>
         val keyParsed = keySubjectConfig
           .map(subject =>
             subject.format match {
@@ -186,7 +187,7 @@ object KapoeiraProducer extends LazyLogging {
           )
           .getOrElse(new String(record.value))
         produce(producer, topicConfig.topicName, keyParsed, headers, valueParsed)
-      }
+      })
     } yield ()
   }
 

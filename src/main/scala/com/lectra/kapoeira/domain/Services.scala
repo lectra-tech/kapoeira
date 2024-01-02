@@ -20,7 +20,7 @@ package com.lectra.kapoeira.domain
 
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import zio.{Has, Task, ZIO}
+import zio.{Task, ZIO}
 
 object Services {
 
@@ -57,21 +57,5 @@ object Services {
 
   trait ReadHeaders[T] {
     def readHeaders(t: T): Map[String, Any]
-  }
-
-  trait ZLogger {
-    def info(message: String): Task[Unit]
-
-    def debug(message: String): Task[Unit]
-
-    def warn(message: String): Task[Unit]
-  }
-  object ZLogger{
-
-    def info(message: String): ZIO[Has[ZLogger], Throwable, Unit] = ZIO.accessM[Has[ZLogger]](_.get.info(message))
-
-    def debug(message: String): ZIO[Has[ZLogger], Throwable, Unit] = ZIO.accessM[Has[ZLogger]](_.get.debug(message))
-
-    def warn(message: String): ZIO[Has[ZLogger], Throwable, Unit] = ZIO.accessM[Has[ZLogger]](_.get.warn(message))
   }
 }
