@@ -19,17 +19,13 @@
 package com.lectra.kapoeira.kafka
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.lectra.kapoeira.Config
 import com.lectra.kapoeira.Config._
 import com.lectra.kapoeira.domain._
 import com.typesafe.scalalogging.LazyLogging
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils
 import io.confluent.kafka.schemaregistry.json.JsonSchemaUtils
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord, KafkaConsumer}
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
 import io.confluent.kafka.serializers.KafkaJsonDeserializerConfig
+import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord, KafkaConsumer}
 
 import java.time.Duration
 import java.util.Properties
@@ -52,29 +48,22 @@ object KapoeiraConsumer extends LazyLogging {
 
   def createConsumer[K: DataType, V: DataType]: KafkaConsumer[K, V] = {
     val kafkaParams = new Properties()
-    kafkaParams.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_BROKER_LIST)
+
+    kafkaConsumerProperties().foreach { case (key, value) =>
+      kafkaParams.put(key, value)
+    }
+    // specific options
     kafkaParams.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, implicitly[DataType[K]].classDeserializer)
     kafkaParams.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, implicitly[DataType[V]].classDeserializer)
-    kafkaParams.put(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP)
     kafkaParams.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
     kafkaParams.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true: java.lang.Boolean)
     kafkaParams.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed")
-    kafkaParams.put("schema.registry.url", Config.KAFKA_SCHEMA_REGISTRY_URL)
     kafkaParams.put(KafkaJsonDeserializerConfig.JSON_VALUE_TYPE, classOf[JsonNode].getName)
-
-    logger.info(s"KAFKA_BROKER_LIST=$KAFKA_BROKER_LIST")
-    logger.info(s"JAAS_AUTHENT=$JAAS_AUTHENT")
-    if (JAAS_AUTHENT) {
-      kafkaParams.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-512")
-      kafkaParams.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.name)
-      kafkaParams.put(
-        SaslConfigs.SASL_JAAS_CONFIG,
-        s"org.apache.kafka.common.security.scram.ScramLoginModule required username='$KAFKA_USER' password='$KAFKA_PASSWORD';"
-      )
-    }
+    logger.info(s"KAFKA_BOOTSTRAP_SERVERS=${kafkaParams.get(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG)}")
     logger.info(s"""Create consumer with : \n
-                   |group.id = $CONSUMER_GROUP \n
+                   |group.id = ${kafkaParams.get(ConsumerConfig.GROUP_ID_CONFIG)} \n
                    |""".stripMargin)
+    logger.debug(kafkaParams.toString)
     new KafkaConsumer[K, V](kafkaParams)
   }
 
@@ -85,7 +74,7 @@ object KapoeiraConsumer extends LazyLogging {
     val consumer = outputConfig.consumer
     val topic = outputConfig.outputConfig.topicName
     val waitDuration = outputConfig.outputConfig.consumerTimeout * 1000
-    logger.info(s"Consuming AVRO $topic during $waitDuration ms...")
+    logger.info(s"Consuming $topic during $waitDuration ms...")
 
     consumer.assignment().forEach(p => logger.debug(s"BEFORE CONSUME - partition=$p, position=${consumer.position(p)}"))
     consumer

@@ -18,20 +18,35 @@
  */
 package com.lectra.kapoeira
 
-import java.util.UUID
 import com.typesafe.config.ConfigFactory
+import org.apache.kafka.clients.consumer.ConsumerConfig
 
 import java.net.InetAddress
+import java.util.UUID
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 object Config {
-  private val config = ConfigFactory.load()
-  def uuidTest: String = UUID.randomUUID().toString
-  val KAFKA_BROKER_LIST: String = config.getString("kafka.bootstrap.server")
-  val KAFKA_USER: String = config.getString("kafka.user")
-  val KAFKA_PASSWORD: String = config.getString("kafka.password")
-  val hostname = Try{InetAddress.getLocalHost.getHostName}.getOrElse("Unknown")
-  def CONSUMER_GROUP: String = s"${config.getString("consumer.group")}-$hostname-$uuidTest"
-  val JAAS_AUTHENT: Boolean = config.getBoolean("kafka.authent.isjaas")
-  val KAFKA_SCHEMA_REGISTRY_URL = config.getString("kafka.schema.registry.url")
+  private val rootConfig = ConfigFactory.load()
+  private val hostname = Try{InetAddress.getLocalHost.getHostName}.getOrElse("Unknown")
+  private def uuidTest(): String = UUID.randomUUID().toString
+
+  // Kapoeira config
+  private val kapoeiraConsumerGroupIdUniqueSuffix = rootConfig.getBoolean("kapoeira.consumer.group.id-unique-suffix")
+
+  // Kafka common config
+  val KAFKA_SCHEMA_REGISTRY_URL = rootConfig.getString("kafka.schema.registry.url")
+  val kafkaCommonProperties = rootConfig.getConfig("kafka").withoutPath("consumer").withoutPath("producer").entrySet().asScala.map(e => e.getKey -> e.getValue.unwrapped()).toMap
+
+  // Kafka consumer config
+  private val kafkaConsumerGroupId = rootConfig.getString("kafka.consumer.group.id")
+  private val internalKafkaConsumerProperties = kafkaCommonProperties ++ rootConfig.getConfig("kafka.consumer").entrySet().asScala.map(e => e.getKey -> e.getValue.unwrapped()).toMap
+  def kafkaConsumerProperties() =
+    if (kapoeiraConsumerGroupIdUniqueSuffix) {
+      internalKafkaConsumerProperties.filterNot(_._1==ConsumerConfig.GROUP_ID_CONFIG) ++ Map(ConsumerConfig.GROUP_ID_CONFIG -> s"$kafkaConsumerGroupId-$hostname-${uuidTest()}")
+    } else internalKafkaConsumerProperties
+
+  // Kafka producer config
+  val kafkaProducerProperties = kafkaCommonProperties.concat(rootConfig.getConfig("kafka.producer").entrySet().asScala.map(e => e.getKey -> e.getValue.unwrapped()).toMap)
+
 }
