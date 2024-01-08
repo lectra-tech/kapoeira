@@ -11,6 +11,9 @@
 
     <logger name="com.lectra.kapoeira" level="${LOGGING_LEVEL}" />
     <logger name="org.apache.kafka" level="WARN" />
+    <logger name="org.apache.kafka.clients.admin.AdminClientConfig" level="OFF" />
+    <logger name="org.apache.kafka.clients.consumer.ConsumerConfig" level="OFF" />
+    <logger name="org.apache.kafka.clients.producer.ProducerConfig" level="OFF" />
     <logger name="io.confluent.kafka" level="WARN" />
     <logger name="org.apache.kafka.common.utils.AppInfoParser" level="OFF" /> <!--to remove when custom producer implemented-->
 

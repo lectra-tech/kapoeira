@@ -2,7 +2,7 @@
 
 SCRIPTNAME=$(basename "$0")
 RUNDIR=$(dirname "$(realpath $0)")
-CP_IMAGE_NAME=confluentinc/cp-kafka-connect-base:7.1.1
+CP_IMAGE_NAME=confluentinc/cp-kafka-connect-base:7.2.9
 
 function generateInput {
   local tmpFile=$1

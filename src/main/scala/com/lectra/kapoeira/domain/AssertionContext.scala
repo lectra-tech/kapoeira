@@ -23,6 +23,7 @@ import com.lectra.kapoeira.exception.AssertException
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.header.Headers
+import zio.logging.backend.SLF4J
 import zio.{Runtime, Unsafe}
 
 final class AssertionContext(
@@ -74,7 +75,10 @@ final class AssertionContext(
     // 3. consume by Topic and group by key =>  Map2[topic, Map[key, Seq[ConsumerRecord]]]
     consumedRecordsByTopicByKey =
       Unsafe.unsafe { implicit unsafe =>
-        Runtime.default.unsafe.run(whenStepsLive.run(whenSteps, expectedRecords)).getOrThrow()
+        Runtime.default.unsafe.run(
+          whenStepsLive
+          .run(whenSteps, expectedRecords).provide(Runtime.removeDefaultLoggers >>> SLF4J.slf4j)
+        ).getOrThrow()
       }
   }
 
