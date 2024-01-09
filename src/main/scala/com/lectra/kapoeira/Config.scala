@@ -36,6 +36,11 @@ object Config {
 
   // Kafka common config
   val KAFKA_SCHEMA_REGISTRY_URL = rootConfig.getString("kafka.schema.registry.url")
+  val KAFKA_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE = rootConfig.getString("kafka.basic.auth.credentials.source")
+  private val userInfo = rootConfig.getString("kafka.basic.auth.user.info").split(":").toSeq
+  val KAFKA_SCHEMA_REGISTRY_BASIC_KEY = userInfo.headOption.getOrElse("")
+  val KAFKA_SCHEMA_REGISTRY_BASIC_SECRET = userInfo.lastOption.getOrElse("")
+
   val kafkaCommonProperties = rootConfig.getConfig("kafka").withoutPath("consumer").withoutPath("producer").entrySet().asScala.map(e => e.getKey -> e.getValue.unwrapped()).toMap
 
   // Kafka consumer config

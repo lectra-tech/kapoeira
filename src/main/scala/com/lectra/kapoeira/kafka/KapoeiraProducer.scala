@@ -29,6 +29,7 @@ import io.confluent.kafka.schemaregistry.json.JsonSchemaUtils
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.kafka.clients.producer._
+import requests.RequestAuth
 import zio.{Scope, Task, ZIO}
 
 import java.util.Properties
@@ -36,13 +37,20 @@ import scala.util.{Failure, Try}
 
 object KapoeiraProducer extends LazyLogging {
 
+  private val requestAuth : RequestAuth = {
+    if (KAFKA_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE=="USER_INFO") {
+      (KAFKA_SCHEMA_REGISTRY_BASIC_KEY, KAFKA_SCHEMA_REGISTRY_BASIC_SECRET)
+    } else RequestAuth.Empty
+  }
+
   private def serializeJson(subject: SubjectConfig, bytes: Array[Byte]): JsonNode = {
     val schemaString =
       requests
         .get(
-          s"$KAFKA_SCHEMA_REGISTRY_URL/subjects/${subject.name}/versions/latest/schema"
-        )
-        .text()
+          url = s"$KAFKA_SCHEMA_REGISTRY_URL/subjects/${subject.name}/versions/latest/schema",
+          auth = requestAuth,
+          verifySslCerts = false
+        ).text()
     val value = new String(bytes)
     val mapper = new ObjectMapper()
     val schemaJson = mapper.readTree(schemaString)
@@ -55,9 +63,10 @@ object KapoeiraProducer extends LazyLogging {
     val schemaVersions =
       requests
         .get(
-          s"$KAFKA_SCHEMA_REGISTRY_URL/subjects/${subject.name}/versions"
-        )
-        .text()
+          url = s"$KAFKA_SCHEMA_REGISTRY_URL/subjects/${subject.name}/versions",
+          auth = requestAuth,
+          verifySslCerts = false
+        ).text()
     val versions: Array[String] = schemaVersions.replace("[", "").replace("]", "").split(",")
 
     val init: Try[GenericData.Record] = Failure[GenericData.Record](new Exception(s"No schema version found for subject ${subject.name}"))
@@ -67,9 +76,10 @@ object KapoeiraProducer extends LazyLogging {
         val schemaString =
         requests
           .get(
-        s"$KAFKA_SCHEMA_REGISTRY_URL/subjects/${subject.name}/versions/$version/schema"
-        )
-          .text()
+            url = s"$KAFKA_SCHEMA_REGISTRY_URL/subjects/${subject.name}/versions/$version/schema",
+            auth = requestAuth,
+            verifySslCerts = false
+        ).text()
         val parser = new Schema.Parser()
         val schema = parser.parse(schemaString)
         Try(AvroSchemaUtils

@@ -147,13 +147,16 @@ Available Docker volumes::
 * `/features`: root Kapoeira folder (sub-folders can be defined)
 * `/reports`: folder containing Junit generated reports (`kapoeira-report.html`, `kapoeira-report.json`, `kapoeira-report.xml`)
 * `/conf`: folder with extra configuration files
-* `/var/run/docker.sock` : docker-cli is installed in Kapoeira, so you can set `-v /var/run/docker.sock:/var/run/docker.sock` for calling Docker command into Kapoeira
+* `/var/run/docker.sock` : docker-cli is installed in Kapoeira, so you can set `-v /var/run/docker.sock:/var/run/docker.sock` for calling Docker commands into Kapoeira
 
 Available environment variables::
 * `KAFKA_BOOTSTRAP_SERVERS`: Kafka broker host & port list; default: `localhost:9092`
-* `KAFKA_SCHEMA_REGISTRY_URL`: Schema Registry URL for AVRO/Json Schema contents (on Record Key or Value); default: `http://localhost:8081`
 * `KAFKA_USERNAME`: Kafka broker username for configuration having user authentication; default: empty string
 * `KAFKA_PASSWORD`: Kafka broker password for configuration having user authentication; default: empty string
+* `KAFKA_SCHEMA_REGISTRY_URL`: Schema Registry URL for AVRO/Json Schema contents (on Record Key or Value); default: `http://localhost:8081`
+* `KAFKA_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE`: Basic authentication mode for Schema Registry, `USER_INFO` for Confluent Cloud Schema Registry; default: empty string (no basic authentication)
+* `KAFKA_SCHEMA_REGISTRY_KEY`: Schema Registry API key if Basic authentication is enabled
+* `KAFKA_SCHEMA_REGISTRY_SECRET`: Schema Registry API secret if Basic authentication is enabled
 * `KAFKA_CONSUMER_GROUP_ID`: Kafka consumer group id for any created consumers; it is only a prefix if `KAPOEIRA_CONSUMER_GROUP_ID_UNIQUE_SUFFIX` is set to `true`; default: `kapoeira`
 * `KAPOEIRA_CONSUMER_GROUP_ID_UNIQUE_SUFFIX`: Boolean for adding a unique suffix (`-<hostname>-<uuid>`) for each created consumer; default: `true`
 * `KAPOEIRA_THREADS`: number of threads used by Cucumber; default: `8`
