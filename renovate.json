@@ -1,0 +1,15 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+      "config:base",
+      "group:all"
+    ],
+    "vulnerabilityAlerts": {
+      "labels": [
+        "security"
+      ]
+    },
+    "schedule": [
+      "after 9am and before 5pm on monday"
+    ]
+}
