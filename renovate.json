@@ -10,6 +10,20 @@
       ]
     },
     "schedule": [
-      "after 9am and before 5pm on monday"
+      "before 9am on monday"
+    ],
+    "packageRules": [
+      {
+        "matchPackagePrefixes": ["org.apache.kafka"],
+        "groupName": "kafka",
+        "allowedVersions": "<3.3",
+        "separateMajorMinor": false
+      },
+      {
+        "matchPackagePrefixes": ["io.confluent"],
+        "groupName": "kafka",
+        "allowedVersions": "<7.3",
+        "separateMajorMinor": false
+      }
     ]
 }

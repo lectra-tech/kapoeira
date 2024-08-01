@@ -1,7 +1,24 @@
+/*
+ * Copyright (C) 2024 Lectra
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * License-Filename: LICENSE
+ */
 package com.lectra.kapoeira.domain
 
-import ammonite.ops.ImplicitWd._
-import ammonite.ops._
+import os.{CommandResult, SubprocessException}
 
 import scala.util._
 
@@ -12,10 +29,10 @@ object CallScript {
     def run(backgroundContext: BackgroundContext): ScriptResult = (callScript match {
       case CallScriptPath(script) => callScript(scriptFullPath(backgroundContext.substituteVariablesIn(script)))
       case CallPlainScript(script) => callScript(backgroundContext.substituteVariablesIn(script))
-    }).fold({ case e: ShelloutException => ScriptResult.from(e.result) }, ScriptResult.from)
+    }).fold({ case e: SubprocessException => ScriptResult.from(e.result) }, ScriptResult.from)
 
     private def callScript(script: String): Try[CommandResult] = Try(
-      %%(script.split(" ").toList)
+      os.proc(script.split(" ").toList).call()
     )
 
     private def scriptFullPath(script: String): String = {
@@ -43,7 +60,7 @@ final case class ScriptResult(exitCode: Int, stdOut: String, stdErr: String)
 object ScriptResult {
   def from(commandResult: CommandResult): ScriptResult = ScriptResult(
     commandResult.exitCode,
-    commandResult.out.string.trim,
-    commandResult.err.string.trim
+    commandResult.out.trim(),
+    commandResult.err.trim()
   )
 }
