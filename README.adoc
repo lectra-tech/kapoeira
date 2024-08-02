@@ -209,15 +209,6 @@ docker run --rm -ti \
     lectratech/kapoeira:latest
 ----
 
-[IMPORTANT]
-====
-* `KAFKA_BOOTSTRAP_SERVER` is deprecated, use `KAFKA_BOOTSTRAP_SERVERS` instead
-* `KAFKA_USER` is deprecated, use `KAFKA_USERNAME` instead
-* `THREADS` is deprecated, use `KAPOEIRA_THREADS` instead
-* `LOGGING_LEVEL` is deprecated, use `KAPOEIRA_LOGGING_LEVEL` instead
-* `JAAS_AUTHENT` is no longer used
-====
-
 == Syntax Guide
 
 === Features and Background
