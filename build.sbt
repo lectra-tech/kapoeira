@@ -26,7 +26,6 @@ lazy val root = (project in file("."))
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.3",
       "io.gatling" % "gatling-jsonpath" % "3.11.5",
-      "com.lihaoyi" %% "requests" % "0.9.0",
       "com.lihaoyi" %% "os-lib" % "0.10.3",
       "ch.qos.logback" % "logback-classic" % "1.5.6" % Runtime,
       "dev.zio" %% "zio" % zioVersion,

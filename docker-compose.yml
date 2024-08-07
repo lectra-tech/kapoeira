@@ -77,7 +77,7 @@ services:
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:29092'
       CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: 'connect:8083'
-      CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://primary-ksqldb-server:8088"
+      CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://ksqldb-server:8088"
       CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://localhost:8088"
       CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       CONTROL_CENTER_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE: USER_INFO
@@ -87,10 +87,10 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
-  primary-ksqldb-server:
+  ksqldb-server:
     image: confluentinc/cp-ksqldb-server:${CONFLUENT_KAFKA_VERSION}
-    hostname: primary-ksqldb-server
-    container_name: primary-ksqldb-server
+    hostname: ksqldb-server
+    container_name: ksqldb-server
     depends_on:
       - kafka
       - schema-registry
@@ -107,8 +107,6 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
   create-topics:
-    profiles:
-      - test
     image: confluentinc/cp-enterprise-kafka:${CONFLUENT_KAFKA_VERSION}
     volumes:
       - ./src/test/resources/scripts:/opt/kapoeira/scripts
@@ -126,8 +124,6 @@ services:
         echo Creating subjects... && \
         ./createSchemas.sh'"
   create-streams:
-    profiles:
-      - test
     image: confluentinc/cp-ksqldb-cli:${CONFLUENT_KAFKA_VERSION}
     container_name: create-streams
     volumes:
@@ -142,7 +138,7 @@ services:
       - -f
       - /opt/kapoeira/scripts/createStreams.ksql
       - --
-      - http://primary-ksqldb-server:8088
+      - http://ksqldb-server:8088
   kapoeira:
     profiles:
       - test

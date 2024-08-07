@@ -25,6 +25,7 @@ import com.lectra.kapoeira.domain._
 import com.lectra.kapoeira.kafka.KapoeiraConsumer._
 import com.lectra.kapoeira.kafka.{KapoeiraAdmin, KapoeiraConsumer}
 import com.typesafe.scalalogging.LazyLogging
+import io.confluent.kafka.schemaregistry.json.jackson.Jackson
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
@@ -123,7 +124,7 @@ package object glue extends LazyLogging with RecordReadImplicits {
     }
   }
 
-  private[glue] val objectMapper = new ObjectMapper()
+  private[glue] val objectMapper = Jackson.newObjectMapper();
 
   implicit class RecordReadOps(recordRead: RecordRead) {
     def jsonHeaders: Try[Map[String, Array[Byte]]] = Try(

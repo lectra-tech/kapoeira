@@ -26,7 +26,7 @@ import org.scalatest.matchers.should.Matchers
 
 import java.nio.charset.StandardCharsets
 
-object InterpotaleSpec extends Properties("String") {
+object InterpolateTest extends Properties("String") {
   val ctx = new BackgroundContext
 
   property("identity when context is empty") = forAll { (a: String) =>
@@ -34,7 +34,7 @@ object InterpotaleSpec extends Properties("String") {
   }
 }
 
-class InterpotaleTest extends AnyFlatSpec with Matchers {
+class InterpolateTest extends AnyFlatSpec with Matchers {
   behavior of "interpolate"
   it should "interpolate variables of a string" in {
     val ctx = new BackgroundContext
@@ -60,7 +60,7 @@ class InterpotaleTest extends AnyFlatSpec with Matchers {
     val recordRead = RecordRead(
       "${key1}Topic",
       "${key2}Key",
-      "${key1}Value".getBytes(StandardCharsets.UTF_8),
+      "${key1}Value",
       templateHeaders
     )
 

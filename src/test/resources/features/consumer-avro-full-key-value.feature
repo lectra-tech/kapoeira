@@ -1,4 +1,4 @@
-Feature: consumer-avro-key-value
+Feature: consumer-avro-full-key-value
 
   Background:
     Given subject
