@@ -17,13 +17,17 @@ Feature: consumer-json-key-value
       | topic_alias | key              | value                                                            |
       | topic_in    | aTestKey_${uuid} | {"anInt": 1, "aString": "myString1", "anOptionalString": "test"} |
       | topic_in    | aTestKey_${uuid} | {"anInt": 2, "aString": "myString2", "anOptionalString": null }  |
+#  the following payload does not respect json schema => the test must fail
+#      | topic_in    | aTestKey_${uuid} | {"foo": "bar" }                                                  |
     Then expected records
       | topic_alias | key              | value       |
       | topic_out   | aTestKey_${uuid} | aliasValue1 |
       | topic_out   | aTestKey_${uuid} | aliasValue2 |
+#      | topic_out   | aTestKey_${uuid} | aliasValue3 |
     And assert aliasValue1 $.anInt == 1
     And assert aliasValue1 $.aString == "myString1"
     And assert aliasValue1 $.anOptionalString == "test"
     And assert aliasValue2 $.anInt == 2
     And assert aliasValue2 $.aString == "myString2"
     And assert aliasValue2 $.anOptionalString == null
+#    And assert aliasValue3 $.foo == "bar"
