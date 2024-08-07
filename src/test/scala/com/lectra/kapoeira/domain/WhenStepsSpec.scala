@@ -49,7 +49,7 @@ object WhenStepsSpec extends ZIOSpecDefault {
           WhenStep.empty,
           List(
             0 -> List(
-              RecordRead(aTopicAlias, aKey, aValue.getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, aValue, Map.empty)
             )
           )
         )
@@ -83,10 +83,10 @@ object WhenStepsSpec extends ZIOSpecDefault {
           WhenStep.empty,
           List(
             0 -> List(
-              RecordRead(aTopicAlias, aKey, "aValue1".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue2".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue3".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue4".getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, "aValue1", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue2", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue3", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue4", Map.empty)
             )
           )
         )
@@ -127,12 +127,12 @@ object WhenStepsSpec extends ZIOSpecDefault {
           WhenStep.empty,
           List(
             1 -> List(
-              RecordRead(aTopicAlias, aKey, "aValue1".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue2".getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, "aValue1", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue2", Map.empty)
             ),
             2 -> List(
-              RecordRead(aTopicAlias, aKey, "aValue3".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue4".getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, "aValue3", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue4", Map.empty)
             )
           )
         )
@@ -176,17 +176,17 @@ object WhenStepsSpec extends ZIOSpecDefault {
           WhenStep.empty,
           List(
             1 -> List(
-              RecordRead(aTopicAlias, aKey, "aValue1".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue2".getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, "aValue1", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue2", Map.empty)
             ),
             2 -> List(
-              RecordRead(aTopicAlias, aKey, "aValue3".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue4".getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, "aValue3", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue4", Map.empty)
             )
           )
         ).addStepOnLastBatch(
           kafkaStubb.producer().run(
-            RecordRead(aTopicAlias, aKey, "aValue5".getBytes, Map.empty),
+            RecordRead(aTopicAlias, aKey, "aValue5", Map.empty),
             backgroundContext.inputTopicConfigs.apply(aTopicAlias),
             None,
             None
@@ -233,12 +233,12 @@ object WhenStepsSpec extends ZIOSpecDefault {
           WhenStep.empty,
           List(
             1 -> List(
-              RecordRead(aTopicAlias, aKey, "aValue1".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue2".getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, "aValue1", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue2", Map.empty)
             ),
             2 -> List(
-              RecordRead(aTopicAlias, aKey, "aValue3".getBytes, Map.empty),
-              RecordRead(aTopicAlias, aKey, "aValue4".getBytes, Map.empty)
+              RecordRead(aTopicAlias, aKey, "aValue3", Map.empty),
+              RecordRead(aTopicAlias, aKey, "aValue4", Map.empty)
             )
           )
         )

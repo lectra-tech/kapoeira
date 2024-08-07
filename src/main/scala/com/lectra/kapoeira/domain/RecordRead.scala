@@ -21,7 +21,6 @@ package com.lectra.kapoeira.domain
 import com.lectra.kapoeira.domain
 import com.lectra.kapoeira.domain.Services.ReadHeaders
 
-import java.nio.charset.StandardCharsets
 import scala.util.Try
 
 /** The record read from the cucumber Datatable directly, or a File.
@@ -29,7 +28,7 @@ import scala.util.Try
 final case class RecordRead(
     topicAlias: String,
     key: String,
-    value: Array[Byte],
+    value: String,
     headers: Map[String, Any]
 )
 
@@ -54,11 +53,11 @@ trait RecordData[T] {
 /** Facilitate import of all implicits.
   */
 trait RecordReadImplicits
-    extends InterpotaleImplicits
+    extends InterpolateImplicits
     with RecordDataImplicits
     with RecordDataFromFileImplicits
 
-trait InterpotaleImplicits {
+trait InterpolateImplicits {
 
   implicit val interpolateString: Interpolate[String] =
     (t: String, ctx: BackgroundContext) => ctx.substituteVariablesIn(t)
@@ -70,8 +69,7 @@ trait InterpotaleImplicits {
         ctx
           .substituteVariablesIn(t.key),
         ctx
-          .substituteVariablesIn(new String(t.value))
-          .getBytes(StandardCharsets.UTF_8),
+          .substituteVariablesIn(t.value),
         interpolateMap(t.headers, ctx)
       )
     }
@@ -123,7 +121,7 @@ trait RecordDataFromFileImplicits {
           domain.RecordRead(
             t.topicAlias,
             columns(0),
-            columns(1).getBytes(StandardCharsets.UTF_8),
+            columns(1),
             Try(columns(2))
               .map(headersString => readHeaders.readHeaders(headersString))
               .getOrElse(Map.empty)
@@ -141,7 +139,7 @@ trait RecordDataFromFileImplicits {
         RecordRead(
           t.topicAlias,
           t.key,
-          line.getBytes(StandardCharsets.UTF_8),
+          line,
           Map.empty
         )
       })
@@ -159,7 +157,7 @@ trait RecordDataFromFileImplicits {
           RecordRead(
             t.topicAlias,
             t.key,
-            line.getBytes(StandardCharsets.UTF_8),
+            line,
             Map.empty
           )
         )
@@ -179,7 +177,7 @@ trait RecordDataImplicits {
       override def read(t: KeyValueRecord): RecordRead = RecordRead(
         t.topicAlias,
         t.key,
-        t.value.getBytes(StandardCharsets.UTF_8),
+        t.value,
         t.headers
       )
     }
