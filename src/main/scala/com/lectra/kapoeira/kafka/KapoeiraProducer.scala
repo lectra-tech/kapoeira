@@ -26,6 +26,7 @@ import com.lectra.kapoeira.glue.RecordReadOps
 import com.typesafe.scalalogging.LazyLogging
 import io.confluent.kafka.schemaregistry.avro.{AvroSchema, AvroSchemaUtils}
 import io.confluent.kafka.schemaregistry.json.JsonSchemaUtils
+import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializerConfig
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.kafka.clients.producer._
@@ -110,6 +111,7 @@ object KapoeiraProducer extends LazyLogging {
         kafkaParams.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
         kafkaParams.put(ProducerConfig.ACKS_CONFIG, "1")
         kafkaParams.put(ProducerConfig.RETRIES_CONFIG, "0")
+        kafkaParams.put(KafkaJsonSchemaSerializerConfig.FAIL_INVALID_SCHEMA, "true")
         new KafkaProducer[Any, Any](kafkaParams)
       }) { producer =>
         ZIO
