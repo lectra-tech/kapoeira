@@ -54,11 +54,11 @@ trait RecordData[T] {
 /** Facilitate import of all implicits.
   */
 trait RecordReadImplicits
-    extends InterpotaleImplicits
+    extends InterpolateImplicits
     with RecordDataImplicits
     with RecordDataFromFileImplicits
 
-trait InterpotaleImplicits {
+trait InterpolateImplicits {
 
   implicit val interpolateString: Interpolate[String] =
     (t: String, ctx: BackgroundContext) => ctx.substituteVariablesIn(t)

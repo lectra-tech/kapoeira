@@ -24,9 +24,12 @@ import com.lectra.kapoeira.domain.SubjectFormat.{Avro, Json}
 import com.lectra.kapoeira.domain._
 import com.lectra.kapoeira.glue.RecordReadOps
 import com.typesafe.scalalogging.LazyLogging
-import io.confluent.kafka.schemaregistry.avro.{AvroSchema, AvroSchemaUtils}
-import io.confluent.kafka.schemaregistry.json.JsonSchemaUtils
-import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializerConfig
+import io.confluent.kafka.schemaregistry.SchemaProvider
+import io.confluent.kafka.schemaregistry.avro.{AvroSchema, AvroSchemaProvider, AvroSchemaUtils}
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient
+import io.confluent.kafka.schemaregistry.json.{JsonSchemaProvider, JsonSchemaUtils}
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
+import io.confluent.kafka.serializers.json.{KafkaJsonSchemaSerializer, KafkaJsonSchemaSerializerConfig}
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.kafka.clients.producer._
@@ -34,6 +37,7 @@ import requests.RequestAuth
 import zio.{Scope, Task, ZIO}
 
 import java.util.Properties
+import scala.jdk.CollectionConverters.MapHasAsJava
 import scala.util.{Failure, Try}
 
 object KapoeiraProducer extends LazyLogging {
@@ -43,6 +47,15 @@ object KapoeiraProducer extends LazyLogging {
       (KAFKA_SCHEMA_REGISTRY_BASIC_KEY, KAFKA_SCHEMA_REGISTRY_BASIC_SECRET)
     } else RequestAuth.Empty
   }
+
+  private val schemaProviderList: java.util.List[SchemaProvider] = java.util.List.of(new AvroSchemaProvider, new JsonSchemaProvider)
+  private val schemaRegistryClientCacheCapacity = 1000
+  private val schemaRegistryClient = new CachedSchemaRegistryClient(KAFKA_SCHEMA_REGISTRY_URL, schemaRegistryClientCacheCapacity, schemaProviderList, Map.empty[String, Any].asJava)
+  private val kafkaJsonSerializer = new KafkaJsonSchemaSerializer(schemaRegistryClient, Map[String, Any](
+    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG -> KAFKA_SCHEMA_REGISTRY_URL,
+    AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS -> "true",
+    KafkaJsonSchemaSerializerConfig.FAIL_INVALID_SCHEMA -> "true"
+  ).asJava)
 
   private def serializeJson(subject: SubjectConfig, bytes: Array[Byte]): JsonNode = {
     val schemaString =
