@@ -23,41 +23,25 @@ import com.lectra.kapoeira.Config._
 import com.lectra.kapoeira.domain.SubjectFormat.{Avro, Json}
 import com.lectra.kapoeira.domain._
 import com.lectra.kapoeira.glue.RecordReadOps
+import com.lectra.kapoeira.kafka.SchemaRegistry._
 import com.typesafe.scalalogging.LazyLogging
-import io.confluent.kafka.schemaregistry.SchemaProvider
-import io.confluent.kafka.schemaregistry.avro.{AvroSchema, AvroSchemaProvider, AvroSchemaUtils}
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient
-import io.confluent.kafka.schemaregistry.json.{JsonSchemaProvider, JsonSchemaUtils}
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
-import io.confluent.kafka.serializers.json.{KafkaJsonSchemaSerializer, KafkaJsonSchemaSerializerConfig}
+import io.confluent.kafka.schemaregistry.avro.{AvroSchema, AvroSchemaUtils}
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata
+import io.confluent.kafka.schemaregistry.json.JsonSchemaUtils
+import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializerConfig
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.kafka.clients.producer._
-import requests.RequestAuth
 import zio.{Scope, Task, ZIO}
 
+import java.util
 import java.util.Properties
-import scala.jdk.CollectionConverters.MapHasAsJava
 import scala.util.{Failure, Try}
 
 object KapoeiraProducer extends LazyLogging {
 
-  private val requestAuth : RequestAuth = {
-    if (KAFKA_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE=="USER_INFO") {
-      (KAFKA_SCHEMA_REGISTRY_BASIC_KEY, KAFKA_SCHEMA_REGISTRY_BASIC_SECRET)
-    } else RequestAuth.Empty
-  }
-
-  private val schemaProviderList: java.util.List[SchemaProvider] = java.util.List.of(new AvroSchemaProvider, new JsonSchemaProvider)
-  private val schemaRegistryClientCacheCapacity = 1000
-  private val schemaRegistryClient = new CachedSchemaRegistryClient(KAFKA_SCHEMA_REGISTRY_URL, schemaRegistryClientCacheCapacity, schemaProviderList, Map.empty[String, Any].asJava)
-  private val kafkaJsonSerializer = new KafkaJsonSchemaSerializer(schemaRegistryClient, Map[String, Any](
-    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG -> KAFKA_SCHEMA_REGISTRY_URL,
-    AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS -> "true",
-    KafkaJsonSchemaSerializerConfig.FAIL_INVALID_SCHEMA -> "true"
-  ).asJava)
-
-  private def serializeJson(subject: SubjectConfig, bytes: Array[Byte]): JsonNode = {
+  private def toJsonObject(subject: SubjectConfig, input: String): JsonNode = {
+    val x: String = schemaRegistryClient.getLatestSchemaMetadata(subject.name).getSchema
     val schemaString =
       requests
         .get(
@@ -65,14 +49,15 @@ object KapoeiraProducer extends LazyLogging {
           auth = requestAuth,
           verifySslCerts = false
         ).text()
-    val value = new String(bytes)
     val mapper = new ObjectMapper()
     val schemaJson = mapper.readTree(schemaString)
-    val valueJson: JsonNode = mapper.readTree(value)
+    val valueJson: JsonNode = mapper.readTree(input)
     JsonSchemaUtils.envelope(schemaJson, valueJson)
   }
 
-  private def serializeAvro(subject: SubjectConfig, bytes: Array[Byte]): GenericData.Record = {
+  private def toAvroObject(subject: SubjectConfig, input: String): GenericData.Record = {
+    val x: util.List[Integer] = schemaRegistryClient.getAllVersions(subject.name)
+    val y = schemaRegistryClient.getByVersion(subject.name, x.get(0), false)
 
     val schemaVersions =
       requests
@@ -97,7 +82,7 @@ object KapoeiraProducer extends LazyLogging {
         val parser = new Schema.Parser()
         val schema = parser.parse(schemaString)
         Try(AvroSchemaUtils
-          .toObject(new String(bytes), new AvroSchema(schema))
+          .toObject(input, new AvroSchema(schema))
           .asInstanceOf[GenericData.Record])
       }
       else {
@@ -107,6 +92,7 @@ object KapoeiraProducer extends LazyLogging {
 
   }
 
+  // TODO only Array[Byte], Array[Byte] (serialization done before) ? (de)serializers can be singletons!
   private def producer[K: DataType, V: DataType](topicConfig: TopicConfig): ZIO[
     Any with Scope,
     Throwable,
@@ -190,19 +176,19 @@ object KapoeiraProducer extends LazyLogging {
         val keyParsed = keySubjectConfig
           .map(subject =>
             subject.format match {
-              case SubjectFormat.Avro => serializeAvro(subject, record.key.getBytes())
-              case SubjectFormat.Json => serializeJson(subject, record.key.getBytes())
+              case SubjectFormat.Avro => toAvroObject(subject, record.key)
+              case SubjectFormat.Json => toJsonObject(subject, record.key)
             }
           )
           .getOrElse(record.key)
         val valueParsed = valueSubjectConfig
           .map(subject =>
             subject.format match {
-              case SubjectFormat.Avro => serializeAvro(subject, record.value)
-              case SubjectFormat.Json => serializeJson(subject, record.value)
+              case SubjectFormat.Avro => toAvroObject(subject, record.value)
+              case SubjectFormat.Json => toJsonObject(subject, record.value)
             }
           )
-          .getOrElse(new String(record.value))
+          .getOrElse(record.value)
         produce(producer, topicConfig.topicName, keyParsed, headers, valueParsed)
       })
     } yield ()

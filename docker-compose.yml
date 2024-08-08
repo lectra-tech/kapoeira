@@ -107,8 +107,6 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
   create-topics:
-    profiles:
-      - test
     image: confluentinc/cp-enterprise-kafka:${CONFLUENT_KAFKA_VERSION}
     volumes:
       - ./src/test/resources/scripts:/opt/kapoeira/scripts
@@ -126,8 +124,6 @@ services:
         echo Creating subjects... && \
         ./createSchemas.sh'"
   create-streams:
-    profiles:
-      - test
     image: confluentinc/cp-ksqldb-cli:${CONFLUENT_KAFKA_VERSION}
     container_name: create-streams
     volumes:
