@@ -33,7 +33,7 @@ RUN sbt clean coverageOn test coverageReport coverageOff
 RUN sbt "set assembly / test  := {}" assembly
 RUN sbt dependencyUpdatesReport
 
-FROM eclipse-temurin:21-jre AS release
+FROM eclipse-temurin:21.0.4_7-jre AS release
 ENV KAFKA_BOOTSTRAP_SERVERS="localhost:9092"
 ENV KAFKA_USERNAME=""
 ENV KAFKA_PASSWORD=""
