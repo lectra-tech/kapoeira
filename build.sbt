@@ -6,7 +6,7 @@ ThisBuild / publishLocalConfiguration := publishLocalConfiguration.value.withOve
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
 
-val zioVersion = "2.1.6"
+val zioVersion = "2.1.7"
 
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning)
