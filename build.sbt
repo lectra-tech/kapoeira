@@ -6,7 +6,7 @@ ThisBuild / publishLocalConfiguration := publishLocalConfiguration.value.withOve
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
 
-val zioVersion = "2.1.8"
+val zioVersion = "2.1.9"
 
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning)
@@ -26,7 +26,7 @@ lazy val root = (project in file("."))
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.3",
       "io.gatling" % "gatling-jsonpath" % "3.11.5",
-      "com.lihaoyi" %% "os-lib" % "0.10.4",
+      "com.lihaoyi" %% "os-lib" % "0.10.5",
       "ch.qos.logback" % "logback-classic" % "1.5.7" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
