@@ -1,8 +1,17 @@
 ThisBuild / scalaVersion := "2.13.14"
-ThisBuild / organization := "com.lectra.kafka"
+ThisBuild / organization := "com.lectra.kapoeira"
 ThisBuild / organizationName := "lectra"
+ThisBuild / licenses += "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")
 ThisBuild / publishConfiguration := publishConfiguration.value.withOverwrite(true)
 ThisBuild / publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/lectra-tech/kapoeira"),
+    "scm:git:git@github.com/lectra-tech/kapoeira.git"
+  )
+)
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
 
