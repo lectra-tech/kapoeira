@@ -3,13 +3,19 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'feat/**' #will publish snapshots
-#      - 'main' #will also publish snapshots - useful before releasing
+      - 'feat/**' #publish snapshots
+      - 'main' #also publish snapshots - useful before releasing
     tags:
-      - '**' #will publish a release
+      - '**' #publish a release
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      PGP_SECRET : ${{ secrets.GPG_SECRET }}
+      GPG_OWNERTRUST : ${{ secrets.GPG_OWNERTRUST }}
+      SONATYPE_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      SONATYPE_USERNAME: ${{ secrets.NEXUS_USERNAME }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -21,10 +27,12 @@ jobs:
           cache: sbt
       - name: Tests
         run: sbt test
+      - name: Configure GPG Key
+        run: |
+          echo $PGP_SECRET | base64 --decode | gpg --import -v --batch
+      - name: Configure GPG Ownertrust
+        run: |
+          echo -n "$GPG_OWNERTRUST" | base64 --decode | gpg --import-ownertrust
       - name: Release
-        run: sbt ci-release
-        env:
-          PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          PGP_SECRET : ${{ secrets.GPG_SECRET }}
-          SONATYPE_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+        run: |
+          sbt ci-release

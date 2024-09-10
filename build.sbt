@@ -1,5 +1,7 @@
+import xerial.sbt.Sonatype.{sonatypeCentralHost, sonatypeLegacy}
+
 ThisBuild / scalaVersion := "2.13.14"
-ThisBuild / organization := "com.lectra.kapoeira"
+ThisBuild / organization := "com.lectra"
 ThisBuild / organizationName := "lectra"
 ThisBuild / licenses += "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")
 ThisBuild / publishConfiguration := publishConfiguration.value.withOverwrite(true)
@@ -10,15 +12,23 @@ ThisBuild / scmInfo := Some(
     "scm:git:git@github.com/lectra-tech/kapoeira.git"
   )
 )
-ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
-sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
+//ThisBuild / sonatypeCredentialHost := sonatypeCentralHost
+ThisBuild / sonatypeCredentialHost := "oss.sonatype.org"
+ThisBuild / sonatypeRepository := "https://oss.sonatype.org/service/local"
+ThisBuild / versionScheme := Some("semver-spec")
+ThisBuild / homepage := Some(url("https://github.com/lectra-tech/kapoeira"))
+ThisBuild / developers := List(
+  Developer( "jvauchel", "Johanna Vauchel", "j.vauchel@lectra.com", url("https://github.com/jvauchel") ),
+  Developer("ThomasLegoahec", "Thomas Legoahec","t.legoahec@lectra.com",url("https://github.com/ThomasLegoahec")),
+  Developer("sebastienvidal", "Sébastien Vidal","s.vidal@lectra.com",url("https://github.com/sebastienvidal")),
+  Developer( "mrebiai", "Mehdi Rebiai", "m.rebiai@lectra.com", url("https://github.com/mrebiai") ),
+  Developer( "scarisey", "Sylvain Carisey", "s.carisey@lectra.com", url("https://github.com/scarisey") ),
+)
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
-
 val zioVersion = "2.1.9"
 
 lazy val root = (project in file("."))
-  .enablePlugins(GitVersioning)
   .settings(
     name := "kapoeira",
     // assembly
@@ -64,5 +74,3 @@ ThisBuild / assemblyMergeStrategy := {
     oldStrategy(x)
 }
 
-// git config
-git.useGitDescribe := true
