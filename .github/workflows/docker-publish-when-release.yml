@@ -48,7 +48,7 @@ jobs:
         if: ${{ github.repository == env.ORIGIN_REPOSITORY }}
         uses: sigstore/cosign-installer@4959ce089c160fddf62f7b42464195ba1a56d382 # v3.6.0
         with:
-          cosign-release: 'v2.1.1'
+          cosign-release: 'v2.4.0'
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache
