@@ -1,5 +1,3 @@
-import xerial.sbt.Sonatype.{sonatypeCentralHost, sonatypeLegacy}
-
 ThisBuild / scalaVersion := "2.13.15"
 ThisBuild / organization := "com.lectra"
 ThisBuild / organizationName := "lectra"
@@ -12,7 +10,6 @@ ThisBuild / scmInfo := Some(
     "scm:git:git@github.com/lectra-tech/kapoeira.git"
   )
 )
-//ThisBuild / sonatypeCredentialHost := sonatypeCentralHost
 ThisBuild / sonatypeCredentialHost := "oss.sonatype.org"
 ThisBuild / sonatypeRepository := "https://oss.sonatype.org/service/local"
 ThisBuild / versionScheme := Some("semver-spec")
@@ -32,6 +29,7 @@ lazy val root = (project in file("."))
     name := "kapoeira",
     // assembly
     assembly / assemblyJarName := "kapoeira.jar",
+    assembly / test  := {},
     assembly / mainClass := Some("io.cucumber.core.cli.Main"),
     // confluent
     libraryDependencies += "io.confluent" % "kafka-avro-serializer" % "7.2.12" exclude("javax.ws.rs", "javax.ws.rs-api"),
