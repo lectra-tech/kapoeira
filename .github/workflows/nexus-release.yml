@@ -2,14 +2,11 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches:
-      - 'feat/**' #publish snapshots
-      - 'main' #also publish snapshots - useful before releasing
     tags:
       - '**' #publish a release
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       PGP_SECRET : ${{ secrets.GPG_SECRET }}
