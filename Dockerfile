@@ -30,7 +30,7 @@ RUN sbt update
 COPY .git .git
 COPY src/ ./src/
 RUN sbt clean coverageOn test coverageReport coverageOff
-RUN sbt "set assembly / test  := {}" assembly
+RUN sbt assembly
 RUN sbt dependencyUpdatesReport
 
 FROM eclipse-temurin:21.0.4_7-jre AS release
