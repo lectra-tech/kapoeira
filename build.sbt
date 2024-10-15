@@ -26,7 +26,7 @@ ThisBuild / developers := List(
 )
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
-val zioVersion = "2.1.9"
+val zioVersion = "2.1.11"
 
 lazy val root = (project in file("."))
   .settings(
@@ -41,19 +41,19 @@ lazy val root = (project in file("."))
     // https://github.com/confluentinc/schema-registry/blob/master/pom.xml
     libraryDependencies ++= Seq(
       "org.apache.kafka" %% "kafka" % "3.2.3",
-      "io.cucumber" %% "cucumber-scala" % "8.23.1",
+      "io.cucumber" %% "cucumber-scala" % "8.25.1",
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.3",
       "io.gatling" % "gatling-jsonpath" % "3.12.0",
-      "com.lihaoyi" %% "os-lib" % "0.10.7",
-      "ch.qos.logback" % "logback-classic" % "1.5.8" % Runtime,
+      "com.lihaoyi" %% "os-lib" % "0.11.1",
+      "ch.qos.logback" % "logback-classic" % "1.5.11" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
       "dev.zio" %% "zio-logging-slf4j2" % "2.3.1",
     ),
     // only tests
     libraryDependencies ++= Seq(
-      "io.cucumber" % "cucumber-junit" % "7.19.0",
+      "io.cucumber" % "cucumber-junit" % "7.20.1",
       "org.scalamock" %% "scalamock" % "6.0.0",
       "org.scalacheck" %% "scalacheck" % "1.18.1",
       "dev.zio" %% "zio-test" % zioVersion,
