@@ -18,11 +18,10 @@ ThisBuild / sonatypeRepository := "https://oss.sonatype.org/service/local"
 ThisBuild / versionScheme := Some("semver-spec")
 ThisBuild / homepage := Some(url("https://github.com/lectra-tech/kapoeira"))
 ThisBuild / developers := List(
-  Developer( "jvauchel", "Johanna Vauchel", "j.vauchel@lectra.com", url("https://github.com/jvauchel") ),
-  Developer("ThomasLegoahec", "Thomas Legoahec","t.legoahec@lectra.com",url("https://github.com/ThomasLegoahec")),
+  Developer("jvauchel", "Johanna Vauchel", "j.vauchel@lectra.com", url("https://github.com/jvauchel")),
   Developer("sebastienvidal", "Sébastien Vidal","s.vidal@lectra.com",url("https://github.com/sebastienvidal")),
-  Developer( "mrebiai", "Mehdi Rebiai", "m.rebiai@lectra.com", url("https://github.com/mrebiai") ),
-  Developer( "scarisey", "Sylvain Carisey", "s.carisey@lectra.com", url("https://github.com/scarisey") ),
+  Developer("mrebiai", "Mehdi Rebiai", "m.rebiai@lectra.com", url("https://github.com/mrebiai")),
+  Developer("scarisey", "Sylvain Carisey", "s.carisey@lectra.com", url("https://github.com/scarisey")),
 )
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
