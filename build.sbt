@@ -65,11 +65,12 @@ lazy val root = (project in file("."))
 ThisBuild / assemblyMergeStrategy := {
   case PathList(ps@_*) if ps.last == "module-info.class" => MergeStrategy.discard
   case "META-INF/io.netty.versions.properties" => MergeStrategy.first
+  case "META-INF/FastDoubleParser-NOTICE" => MergeStrategy.first
   case "kafka/kafka-version.properties" => MergeStrategy.first
   case "application.conf" => MergeStrategy.concat
   case "logback.xml" => MergeStrategy.first
   case x =>
-    val oldStrategy = (assembly / assemblyMergeStrategy).value
+    val oldStrategy = (ThisBuild / assemblyMergeStrategy).value
     oldStrategy(x)
 }
 
