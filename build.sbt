@@ -42,11 +42,11 @@ lazy val root = (project in file("."))
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.3",
       "io.gatling" % "gatling-jsonpath" % "3.12.0",
-      "com.lihaoyi" %% "os-lib" % "0.11.1",
+      "com.lihaoyi" %% "os-lib" % "0.11.3",
       "ch.qos.logback" % "logback-classic" % "1.5.11" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
-      "dev.zio" %% "zio-logging-slf4j2" % "2.3.1",
+      "dev.zio" %% "zio-logging-slf4j2" % "2.3.2",
     ),
     // only tests
     libraryDependencies ++= Seq(
