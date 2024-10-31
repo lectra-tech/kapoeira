@@ -19,10 +19,19 @@ Feature: assertions
       | topic_out   | key1_${uuid} | aliasHeaders2.1 | value2.1 |
       | topic_out   | key2_${uuid} | aliasHeaders2.2 | value2.2 |
       | topic_out   | key3_${uuid} | aliasHeaders2.3 | value2.3 |
+      | topic_out   | key4_${uuid} | aliasHeaders2.4 | value2.4 |
     And assert value2.1 $.qux == 42
     And assert value2.2 $ has size 2
     And assert value2.2 $ == [3,4]
     And assert value2.3 $ == "value2.3"
+    And assert value2.4 $.foo == 12.0038209653823934567890123456789
+    And assert value2.4 $.foo == 12.0 +- 0.1
+    And assert value2.4 $.foo == 12.1 +- 0.1
+    And assert value2.4 $.foo == 12.0038 +- 1E-4
+    And assert value2.4 $.foo == 12.0037 +- 1E-3
+    And assert value2.4 $.foo == 12.0039 +- 1E-3
+    And assert value2.4 $.foo == 12.003 +- 1E-3
+    And assert value2.4 $.foo == 12.004 +- 1E-3
     And assert aliasHeaders2.1 $ == {"foo":"bar","baz":"42"}
     And assert aliasHeaders2.1 $.foo == "bar"
 

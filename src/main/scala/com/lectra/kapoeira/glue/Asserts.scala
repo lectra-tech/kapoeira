@@ -63,6 +63,21 @@ object Asserts extends Matchers with LazyLogging {
       }
     )
 
+  def approxEqual(assertionContext: AssertionContext, alias: String, jsonExpression: String, expected: String, approxRange: String):Assertion =
+    assertKafkaOutput(
+    assertionContext,
+    alias,
+    jsonExpression,
+    { actual => (
+        for{
+          x <- actual.double()
+          expected <- JsonExpr(expected).value.double()
+          approx <- JsonExpr(approxRange).value.double()
+        } yield{ x should equal ( expected  +- approx ) }
+      ).fold(fail(s"${actual} equal ${expected} +- ${approxRange}"))(identity)
+    }
+  )
+
   def matchExactObject(
                    assertionContext: AssertionContext,
                    alias: String,
@@ -149,6 +164,11 @@ object Asserts extends Matchers with LazyLogging {
   }
 
   implicit class JsonNodeOps(val jsonNode: JsonNode) {
+
+    def double():Option[Double] ={
+      val none = (_:Any) => Option.empty[Double]
+      jsonNode.fold(obj = none, arr = none, number = Some(_), strng = none, bln = none, bin = none, nullOrUndef = none)
+    }
 
     def fold[T](
         obj: JsonNode => T,
