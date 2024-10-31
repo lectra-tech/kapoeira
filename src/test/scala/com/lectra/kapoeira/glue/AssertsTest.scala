@@ -33,6 +33,31 @@ class AssertsTest extends AnyFlatSpec with Matchers with MockFactory {
 
   behavior of "Asserts"
 
+  it should "assert approximatively equals on numbers" in {
+    val backgroundContext = mock[BackgroundContext]
+    val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext, recordConsume, KapoeiraProducer.run _))
+    val consumerRecord =
+      new ConsumerRecord("topic", 0, 0, "key", """{"foo": 12.003820965382393}""".getBytes.asInstanceOf[Any])
+    val valueAlias = "valueAlias"
+    val keyValueRecord = KeyValueWithAliasesRecord("topic", "key", valueAlias)
+    (backgroundContext
+      .consumeTopic(_: String, _: Map[String, Int])(_: RecordConsumer))
+      .expects(*, *, *)
+      .returning(Map("key" -> Seq(consumerRecord)))
+    val expectedConsumedRecords = List(keyValueRecord)
+    assertionContext.launchConsumption(expectedConsumedRecords)
+
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.0038","0.0001" )
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.0038","1E-4" )
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.0037","1E-3" )
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.0039","1E-3" )
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.003","1E-3" )
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.004","1E-3" )
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.0","0.1" )
+    Asserts.approxEqual(assertionContext, valueAlias, "$.foo", "12.1","0.1" )
+
+  }
+
   it should "assert equality on literals" in {
     val backgroundContext = mock[BackgroundContext]
     val assertionContext = new AssertionContext(WhenStepsLive(backgroundContext, recordConsume, KapoeiraProducer.run _))

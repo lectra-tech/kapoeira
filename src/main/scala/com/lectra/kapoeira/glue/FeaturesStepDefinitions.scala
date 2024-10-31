@@ -176,7 +176,7 @@ class FeaturesStepDefinitions
   }
 
   // ASSERT
-  And("^assert\\s+(\\S+)\\s+(\\S+)\\s*==\\s*(.*)\\s*$") {
+  And("^assert\\s+(\\S+)\\s+(\\S+)\\s*==\\s*([^+-]*)\\s*$") {
     (alias: String, jsonExpression: String, expected: String) =>
       logger.debug(
         s"Assert Step : (alias,jsonExpression,expected) ($alias,$jsonExpression,$expected)"
@@ -223,6 +223,21 @@ class FeaturesStepDefinitions
         jsonExpression,
         { actual => assert(actual == JsonExpr(interpolatedExpectedJson).value) },
         variable.get
+      )
+  }
+
+  And("""^assert\s+(\S+)\s+(\$\S*)\s*==\s+([+-.eE0-9]+)\s+\+\-\s+([+-.eE0-9]+)\s*$""") {
+    (alias: String, jsonExpression: String, expectedJsonNumber: String,approximationJsonNumber:String) =>
+      val interpolatedExpectedJson =
+        backgroundContext.substituteVariablesIn(expectedJsonNumber)
+      val interpolatedApproximationJson =
+        backgroundContext.substituteVariablesIn(approximationJsonNumber)
+      Asserts.approxEqual(
+        assertionContext,
+        alias,
+        jsonExpression,
+        interpolatedExpectedJson,
+        interpolatedApproximationJson
       )
   }
 
