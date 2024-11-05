@@ -524,6 +524,7 @@ Then expected records
     | topic_out   | key1  | aValue |
   And assert aValue $.foo == "fooString"
   And assert aValue $.fooInt == 42
+  And assert aValue $.fooDouble == 12.0038 +- 1E-4
   And assert aValue $.foos has size 3
   And assert aValue $.foos == ["item1","item2","item3"]
   And assert aValue $ match object {"foos":["item1","item2","item3"],"bar":{"baz":["item1","item2","item3"]}}
