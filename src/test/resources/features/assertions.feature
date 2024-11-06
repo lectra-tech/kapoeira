@@ -24,6 +24,8 @@ Feature: assertions
     And assert value2.2 $ has size 2
     And assert value2.2 $ == [3,4]
     And assert value2.3 $ == "value2.3"
+    And assert value2.4 $.bar == "2020-09-09T10:49:25.871365100"
+    And assert value2.4 $.baz == "42.0 +- 0.1"
     And assert value2.4 $.foo == 12.0038209653823934567890123456789
     And assert value2.4 $.foo == 12.0 +- 0.1
     And assert value2.4 $.foo == 12.1 +- 0.1

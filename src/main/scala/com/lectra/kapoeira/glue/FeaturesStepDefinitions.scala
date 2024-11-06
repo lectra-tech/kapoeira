@@ -176,7 +176,7 @@ class FeaturesStepDefinitions
   }
 
   // ASSERT
-  And("^assert\\s+(\\S+)\\s+(\\S+)\\s*==\\s*([^+-]*)\\s*$") {
+  And("""^assert\s+(\S+)\s+(\S+)\s*==(?!\s+(?:[+-.eE0-9]+)\s+\+\-\s+(?:[+-.eE0-9]+)\s*)(?:\s*)(.*)(?:\s*)$""") {
     (alias: String, jsonExpression: String, expected: String) =>
       logger.debug(
         s"Assert Step : (alias,jsonExpression,expected) ($alias,$jsonExpression,$expected)"
