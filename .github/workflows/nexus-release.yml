@@ -6,7 +6,7 @@ on:
       - '**' #publish a release
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     env:
       PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       PGP_SECRET : ${{ secrets.GPG_SECRET }}
