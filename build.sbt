@@ -41,12 +41,12 @@ lazy val root = (project in file("."))
       "io.cucumber" %% "cucumber-scala" % "8.25.1",
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.3",
-      "io.gatling" % "gatling-jsonpath" % "3.12.0",
+      "io.gatling" % "gatling-jsonpath" % "3.13.1",
       "com.lihaoyi" %% "os-lib" % "0.11.3",
       "ch.qos.logback" % "logback-classic" % "1.5.12" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
-      "dev.zio" %% "zio-logging-slf4j2" % "2.3.2",
+      "dev.zio" %% "zio-logging-slf4j2" % "2.4.0",
     ),
     // only tests
     libraryDependencies ++= Seq(
