@@ -22,7 +22,7 @@ ThisBuild / developers := List(
 )
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
-val zioVersion = "2.1.13"
+val zioVersion = "2.1.14"
 
 lazy val root = (project in file("."))
   .settings(
@@ -43,7 +43,7 @@ lazy val root = (project in file("."))
       "com.typesafe" % "config" % "1.4.3",
       "io.gatling" % "gatling-jsonpath" % "3.13.1",
       "com.lihaoyi" %% "os-lib" % "0.11.3",
-      "ch.qos.logback" % "logback-classic" % "1.5.12" % Runtime,
+      "ch.qos.logback" % "logback-classic" % "1.5.15" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
       "dev.zio" %% "zio-logging-slf4j2" % "2.4.0",
