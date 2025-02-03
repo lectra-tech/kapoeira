@@ -38,7 +38,7 @@ lazy val root = (project in file("."))
     // https://github.com/confluentinc/schema-registry/blob/master/pom.xml
     libraryDependencies ++= Seq(
       "org.apache.kafka" %% "kafka" % "3.2.3",
-      "io.cucumber" %% "cucumber-scala" % "8.25.1",
+      "io.cucumber" %% "cucumber-scala" % "8.26.0",
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.3",
       "io.gatling" % "gatling-jsonpath" % "3.13.3",
@@ -50,7 +50,7 @@ lazy val root = (project in file("."))
     ),
     // only tests
     libraryDependencies ++= Seq(
-      "io.cucumber" % "cucumber-junit" % "7.20.1",
+      "io.cucumber" % "cucumber-junit" % "7.21.0",
       "org.scalamock" %% "scalamock" % "6.1.1",
       "org.scalacheck" %% "scalacheck" % "1.18.1",
       "dev.zio" %% "zio-test" % zioVersion,
