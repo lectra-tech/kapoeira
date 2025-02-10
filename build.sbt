@@ -22,7 +22,7 @@ ThisBuild / developers := List(
 )
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
-val zioVersion = "2.1.14"
+val zioVersion = "2.1.15"
 
 lazy val root = (project in file("."))
   .settings(
@@ -50,8 +50,8 @@ lazy val root = (project in file("."))
     ),
     // only tests
     libraryDependencies ++= Seq(
-      "io.cucumber" % "cucumber-junit" % "7.21.0",
-      "org.scalamock" %% "scalamock" % "6.1.1",
+      "io.cucumber" % "cucumber-junit" % "7.21.1",
+      "org.scalamock" %% "scalamock" % "6.2.0",
       "org.scalacheck" %% "scalacheck" % "1.18.1",
       "dev.zio" %% "zio-test" % zioVersion,
       "dev.zio" %% "zio-test-sbt" % zioVersion
