@@ -38,11 +38,11 @@ lazy val root = (project in file("."))
     // https://github.com/confluentinc/schema-registry/blob/master/pom.xml
     libraryDependencies ++= Seq(
       "org.apache.kafka" %% "kafka" % "3.2.3",
-      "io.cucumber" %% "cucumber-scala" % "8.26.0",
+      "io.cucumber" %% "cucumber-scala" % "8.26.1",
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.3",
-      "io.gatling" % "gatling-jsonpath" % "3.13.3",
-      "com.lihaoyi" %% "os-lib" % "0.11.3",
+      "io.gatling" % "gatling-jsonpath" % "3.13.4",
+      "com.lihaoyi" %% "os-lib" % "0.11.4",
       "ch.qos.logback" % "logback-classic" % "1.5.16" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
