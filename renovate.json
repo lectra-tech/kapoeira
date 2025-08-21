@@ -1,30 +1,45 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-      "config:base",
-      "group:all",
-      ":gitSignOff"
-    ],
-    "vulnerabilityAlerts": {
-      "labels": [
-        "security"
-      ]
-    },
-    "schedule": [
-      "before 9am on monday"
-    ],
-    "packageRules": [
-      {
-        "matchPackagePrefixes": ["org.apache.kafka"],
-        "groupName": "kafka",
-        "allowedVersions": "<3.3",
-        "separateMajorMinor": false
-      },
-      {
-        "matchPackagePrefixes": ["io.confluent"],
-        "groupName": "kafka",
-        "allowedVersions": "<7.3",
-        "separateMajorMinor": false
-      }
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "group:all",
+    ":gitSignOff"
+  ],
+  "vulnerabilityAlerts": {
+    "labels": [
+      "security"
     ]
+  },
+  "schedule": [
+    "* 0-4 * * 1-5"
+  ],
+  "automergeSchedule": [
+    "* 6-9 * * 1-5"
+  ],
+  "packageRules": [
+    {
+      "description": "Auto merge",
+      "matchUpdateTypes": ["major", "minor", "patch", "pin", "pinDigest", "digest"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Kafka packages < 3.3",
+      "matchPackagePrefixes": [
+        "org.apache.kafka"
+      ],
+      "groupName": "kafka",
+      "allowedVersions": "<3.3",
+      "separateMajorMinor": false
+    },
+    {
+      "description": "Kafka packages < 7.3",
+      "matchPackagePrefixes": [
+        "io.confluent"
+      ],
+      "groupName": "kafka",
+      "allowedVersions": "<7.3",
+      "separateMajorMinor": false
+    }
+  ]
 }
