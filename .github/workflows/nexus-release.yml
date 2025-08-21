@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - '**' #publish a release
+
+env:
+  SONATYPE_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+  SONATYPE_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -21,8 +26,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - name: Setup sbt launcher
-        uses: sbt/setup-sbt@v1
+          cache: sbt
       - name: Tests
         run: sbt test
       - name: Configure GPG Key
