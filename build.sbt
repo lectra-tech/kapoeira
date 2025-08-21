@@ -10,8 +10,6 @@ ThisBuild / scmInfo := Some(
     "scm:git:git@github.com/lectra-tech/kapoeira.git"
   )
 )
-ThisBuild / sonatypeCredentialHost := "oss.sonatype.org"
-ThisBuild / sonatypeRepository := "https://oss.sonatype.org/service/local"
 ThisBuild / versionScheme := Some("semver-spec")
 ThisBuild / homepage := Some(url("https://github.com/lectra-tech/kapoeira"))
 ThisBuild / developers := List(
