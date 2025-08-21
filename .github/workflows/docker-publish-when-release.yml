@@ -11,6 +11,10 @@ on:
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/') }}
+
 env:
   ORIGIN_REPOSITORY: lectra-tech/kapoeira
   # Dockerhub
