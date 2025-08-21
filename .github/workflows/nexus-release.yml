@@ -27,6 +27,8 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: sbt
+      - name: Setup sbt launcher
+        uses: sbt/setup-sbt@v1
       - name: Tests
         run: sbt test
       - name: Configure GPG Key
