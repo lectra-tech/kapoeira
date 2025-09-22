@@ -48,7 +48,7 @@ lazy val root = (project in file("."))
     ),
     // only tests
     libraryDependencies ++= Seq(
-      "io.cucumber" % "cucumber-junit" % "7.28.2",
+      "io.cucumber" % "cucumber-junit" % "7.29.0",
       "org.scalamock" %% "scalamock" % "7.5.0",
       "org.scalacheck" %% "scalacheck" % "1.19.0",
       "dev.zio" %% "zio-test" % zioVersion,
