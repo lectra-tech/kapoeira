@@ -30,12 +30,12 @@ lazy val root = (project in file("."))
     assembly / test  := {},
     assembly / mainClass := Some("io.cucumber.core.cli.Main"),
     // confluent
-    libraryDependencies += "io.confluent" % "kafka-avro-serializer" % "7.2.15" exclude("javax.ws.rs", "javax.ws.rs-api"),
-    libraryDependencies += "io.confluent" % "kafka-json-schema-serializer" % "7.2.15" exclude("javax.ws.rs", "javax.ws.rs-api"),
+    libraryDependencies += "io.confluent" % "kafka-avro-serializer" % "7.9.2" exclude("javax.ws.rs", "javax.ws.rs-api"),
+    libraryDependencies += "io.confluent" % "kafka-json-schema-serializer" % "7.9.2" exclude("javax.ws.rs", "javax.ws.rs-api"),
     // more libs to include
     // https://github.com/confluentinc/schema-registry/blob/master/pom.xml
     libraryDependencies ++= Seq(
-      "org.apache.kafka" %% "kafka" % "3.2.3",
+      "org.apache.kafka" %% "kafka" % "3.9.1",
       "io.cucumber" %% "cucumber-scala" % "8.33.0",
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.5",
