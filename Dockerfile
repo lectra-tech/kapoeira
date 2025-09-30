@@ -1,9 +1,10 @@
-FROM eclipse-temurin:21.0.8_9-jdk AS builder
+FROM eclipse-temurin:25-jdk AS builder
 
-ENV SCALA_VERSION=2.13.14
-ENV SBT_VERSION=1.10.1
+ENV SCALA_VERSION=2.13.16
+ENV SBT_VERSION=1.11.6
 
 # Install tools...
+RUN apt-get update && apt-get -y upgrade && apt-get -y install curl
 WORKDIR /opt/tools
 # scala
 RUN curl -fsL https://downloads.typesafe.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz | tar xfz - -C .
@@ -33,7 +34,7 @@ RUN sbt clean coverageOn test coverageReport coverageOff
 RUN sbt assembly
 RUN sbt dependencyUpdatesReport
 
-FROM eclipse-temurin:21.0.8_9-jre AS release
+FROM eclipse-temurin:25-jre AS release
 ENV KAFKA_BOOTSTRAP_SERVERS="localhost:9092"
 ENV KAFKA_USERNAME=""
 ENV KAFKA_PASSWORD=""
