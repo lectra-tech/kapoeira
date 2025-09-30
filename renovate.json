@@ -40,6 +40,13 @@
       "groupName": "kafka",
       "allowedVersions": "<7.3",
       "separateMajorMinor": false
+    },
+    {
+      "description": "eclipse-temurin disabled",
+      "matchDepNames": [
+        "eclipse-temurin"
+      ],
+      "enabled": false
     }
   ]
 }
