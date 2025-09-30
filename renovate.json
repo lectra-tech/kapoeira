@@ -24,21 +24,21 @@
       "automergeType": "pr"
     },
     {
-      "description": "Kafka packages < 3.3",
+      "description": "Kafka packages < 4.0",
       "matchPackagePrefixes": [
         "org.apache.kafka"
       ],
       "groupName": "kafka",
-      "allowedVersions": "<3.3",
+      "allowedVersions": "<4.0",
       "separateMajorMinor": false
     },
     {
-      "description": "Kafka packages < 7.3",
+      "description": "Confluent packages < 8.0",
       "matchPackagePrefixes": [
         "io.confluent"
       ],
       "groupName": "kafka",
-      "allowedVersions": "<7.3",
+      "allowedVersions": "<8.0",
       "separateMajorMinor": false
     },
     {
