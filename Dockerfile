@@ -7,7 +7,7 @@ ENV SBT_VERSION=1.11.6
 RUN apt-get update && apt-get -y upgrade && apt-get -y install curl
 WORKDIR /opt/tools
 # scala
-RUN curl -fsL https://downloads.typesafe.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz | tar xfz - -C .
+RUN curl -fsL https://github.com/scala/scala/releases/download/v${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz | tar xfz - -C .
 # sbt
 RUN curl -fsL https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.tgz | tar xfz - -C .
 
@@ -20,7 +20,7 @@ RUN javac -version
 RUN java -version
 RUN scalac -version
 RUN scala -version
-RUN sbt -v sbtVersion -Dsbt.rootdir=true
+RUN sbt -v sbtVersion -Dsbt.rootdir=true --allow-empty
 RUN chmod -R 777 /tmp
 
 WORKDIR /root
