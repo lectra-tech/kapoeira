@@ -1,6 +1,6 @@
 FROM eclipse-temurin:25-jdk AS builder
 
-ENV SCALA_VERSION=2.13.16
+ENV SCALA_VERSION=2.13.17
 ENV SBT_VERSION=1.11.6
 
 # Install tools...
