@@ -39,7 +39,7 @@ lazy val root = (project in file("."))
       "io.cucumber" %% "cucumber-scala" % "8.35.0",
       "org.scalatest" %% "scalatest" % "3.2.19",
       "com.typesafe" % "config" % "1.4.5",
-      "io.gatling" % "gatling-jsonpath" % "3.14.5",
+      "io.gatling" % "gatling-jsonpath" % "3.14.6",
       "com.lihaoyi" %% "os-lib" % "0.11.5",
       "ch.qos.logback" % "logback-classic" % "1.5.20" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
