@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jdk AS builder
+FROM eclipse-temurin:25.0.1_8-jdk AS builder
 
 ENV SCALA_VERSION=2.13.17
 ENV SBT_VERSION=1.11.6
@@ -34,7 +34,7 @@ RUN sbt clean coverageOn test coverageReport coverageOff
 RUN sbt assembly
 RUN sbt dependencyUpdatesReport
 
-FROM eclipse-temurin:25-jre AS release
+FROM eclipse-temurin:25.0.1_8-jre AS release
 ENV KAFKA_BOOTSTRAP_SERVERS="localhost:9092"
 ENV KAFKA_USERNAME=""
 ENV KAFKA_PASSWORD=""
