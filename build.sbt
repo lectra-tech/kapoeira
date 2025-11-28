@@ -20,7 +20,7 @@ ThisBuild / developers := List(
 )
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
-val zioVersion = "2.1.22"
+val zioVersion = "2.1.23"
 
 lazy val root = (project in file("."))
   .settings(
@@ -44,7 +44,7 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.5.21" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
-      "dev.zio" %% "zio-logging-slf4j2" % "2.5.1",
+      "dev.zio" %% "zio-logging-slf4j2" % "2.5.2",
     ),
     // only tests
     libraryDependencies ++= Seq(
