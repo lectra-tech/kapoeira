@@ -1,18 +1,22 @@
 FROM eclipse-temurin:25.0.1_8-jdk AS builder
 
-ENV SCALA_VERSION=2.13.17
-ENV SBT_VERSION=1.11.6
+COPY build.sbt /tmp/build.sbt
+COPY project/build.properties /tmp/build.properties
+RUN echo "$(grep "scalaVersion" /tmp/build.sbt | cut -d"=" -f2 | xargs)" > /tmp/scalaVersion.txt
+RUN echo "$(grep "sbt.version" /tmp/build.properties | cut -d"=" -f2 | xargs)" > /tmp/sbtVersion.txt
+RUN rm /tmp/build.sbt /tmp/build.properties
 
 # Install tools...
 RUN apt-get update && apt-get -y upgrade && apt-get -y install curl
 WORKDIR /opt/tools
 # scala
-RUN curl -fsL https://github.com/scala/scala/releases/download/v${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz | tar xfz - -C .
+RUN curl -fsL https://github.com/scala/scala/releases/download/v$(cat /tmp/scalaVersion.txt)/scala-$(cat /tmp/scalaVersion.txt).tgz | tar xfz - -C .
+RUN mv /opt/tools/scala-$(cat /tmp/scalaVersion.txt) /opt/tools/scala
 # sbt
-RUN curl -fsL https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.tgz | tar xfz - -C .
+RUN curl -fsL https://github.com/sbt/sbt/releases/download/v$(cat /tmp/sbtVersion.txt)/sbt-$(cat /tmp/sbtVersion.txt).tgz | tar xfz - -C .
 
 # PATH
-ENV PATH="${PATH}:/opt/tools/scala-${SCALA_VERSION}/bin:/opt/tools/sbt/bin"
+ENV PATH="${PATH}:/opt/tools/scala/bin:/opt/tools/sbt/bin"
 
 # Test
 WORKDIR /tmp/test-tools

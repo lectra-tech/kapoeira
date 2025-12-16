@@ -1,7 +1,7 @@
 ---
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:${CONFLUENT_KAFKA_VERSION}
+    image: confluentinc/cp-zookeeper:7.9.5
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -12,7 +12,7 @@ services:
     networks:
       - local_kafka
   kafka:
-    image: confluentinc/cp-server:${CONFLUENT_KAFKA_VERSION}
+    image: confluentinc/cp-server:7.9.5
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -43,7 +43,7 @@ services:
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
   schema-registry:
-    image: confluentinc/cp-schema-registry:${CONFLUENT_KAFKA_VERSION}
+    image: confluentinc/cp-schema-registry:7.9.5
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -64,7 +64,7 @@ services:
       - ./src/test/resources/schema-registry/schema-registry-jaas.conf:/tmp/schema-registry-jaas.conf:ro
       - ./src/test/resources/schema-registry/schema-registry-passwords:/tmp/schema-registry-passwords:ro
   control-center:
-    image: confluentinc/cp-enterprise-control-center:${CONFLUENT_KAFKA_VERSION}
+    image: confluentinc/cp-enterprise-control-center:7.9.5
     hostname: control-center
     container_name: control-center
     depends_on:
@@ -88,7 +88,7 @@ services:
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
   ksqldb-server:
-    image: confluentinc/cp-ksqldb-server:${CONFLUENT_KAFKA_VERSION}
+    image: confluentinc/cp-ksqldb-server:7.9.5
     hostname: ksqldb-server
     container_name: ksqldb-server
     depends_on:
@@ -107,7 +107,7 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
   create-topics:
-    image: confluentinc/cp-enterprise-kafka:${CONFLUENT_KAFKA_VERSION}
+    image: confluentinc/cp-enterprise-kafka:7.9.5
     volumes:
       - ./src/test/resources/scripts:/opt/kapoeira/scripts
     working_dir: /opt/kapoeira/scripts
@@ -124,7 +124,7 @@ services:
         echo Creating subjects... && \
         ./createSchemas.sh'"
   create-streams:
-    image: confluentinc/cp-ksqldb-cli:${CONFLUENT_KAFKA_VERSION}
+    image: confluentinc/cp-ksqldb-cli:7.9.5
     container_name: create-streams
     volumes:
       - ./src/test/resources/scripts:/opt/kapoeira/scripts
