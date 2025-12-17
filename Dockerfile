@@ -34,8 +34,8 @@ COPY project/ ./project/
 RUN sbt update
 COPY .git .git
 COPY src/ ./src/
-RUN sbt clean coverageOn test coverageReport coverageOff
-RUN sbt assembly
+RUN sbt clean assembly
+RUN sbt coverageOn test coverageReport coverageOff
 RUN sbt dependencyUpdatesReport
 
 FROM eclipse-temurin:25.0.1_8-jre AS release
