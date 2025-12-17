@@ -40,6 +40,15 @@
       "groupName": "kafka",
       "allowedVersions": "<8.0",
       "separateMajorMinor": false
+    },
+    {
+      "description": "Confluent docker images < 8.0",
+      "matchPackagePrefixes": [
+        "confluentinc/"
+      ],
+      "groupName": "kafka",
+      "allowedVersions": "<8.0",
+      "separateMajorMinor": false
     }
   ]
 }
