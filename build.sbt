@@ -20,7 +20,7 @@ ThisBuild / developers := List(
 )
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
-val zioVersion = "2.1.23"
+val zioVersion = "2.1.24"
 
 lazy val root = (project in file("."))
   .settings(
