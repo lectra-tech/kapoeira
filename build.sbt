@@ -44,7 +44,7 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.5.24" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
-      "dev.zio" %% "zio-logging-slf4j2" % "2.5.2",
+      "dev.zio" %% "zio-logging-slf4j2" % "2.5.3",
     ),
     // only tests
     libraryDependencies ++= Seq(
