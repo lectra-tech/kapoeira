@@ -24,30 +24,39 @@
       "automergeType": "pr"
     },
     {
-      "description": "Kafka packages < 4.0",
+      "description": "Kafka packages < 4.0.0",
       "matchPackagePrefixes": [
         "org.apache.kafka"
       ],
       "groupName": "kafka",
-      "allowedVersions": "<4.0",
+      "allowedVersions": "<4.0.0",
       "separateMajorMinor": false
     },
     {
-      "description": "Confluent packages < 8.0",
+      "description": "Confluent packages < 8.0.0",
       "matchPackagePrefixes": [
         "io.confluent"
       ],
       "groupName": "kafka",
-      "allowedVersions": "<8.0",
+      "allowedVersions": "<8.0.0",
       "separateMajorMinor": false
     },
     {
-      "description": "Confluent docker images < 8.0",
+      "description": "Confluent docker images < 8.0.0",
       "matchPackagePrefixes": [
         "confluentinc/"
       ],
       "groupName": "kafka",
-      "allowedVersions": "<8.0",
+      "allowedVersions": "<8.0.0",
+      "separateMajorMinor": false
+    },
+    {
+      "description": "Scala version < 3.0.0",
+      "matchDepNames": [
+        "scala"
+      ],
+      "groupName": "scala",
+      "allowedVersions": "<3.0.0",
       "separateMajorMinor": false
     }
   ]
