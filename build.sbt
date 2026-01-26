@@ -41,7 +41,7 @@ lazy val root = (project in file("."))
       "com.typesafe" % "config" % "1.4.5",
       "io.gatling" % "gatling-jsonpath" % "3.14.9",
       "com.lihaoyi" %% "os-lib" % "0.11.6",
-      "ch.qos.logback" % "logback-classic" % "1.5.25" % Runtime,
+      "ch.qos.logback" % "logback-classic" % "1.5.26" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
       "dev.zio" %% "zio-logging-slf4j2" % "2.5.3",
@@ -49,7 +49,7 @@ lazy val root = (project in file("."))
     // only tests
     libraryDependencies ++= Seq(
       "io.cucumber" % "cucumber-junit" % "7.33.0",
-      "org.scalamock" %% "scalamock" % "7.5.3",
+      "org.scalamock" %% "scalamock" % "7.5.4",
       "org.scalacheck" %% "scalacheck" % "1.19.0",
       "dev.zio" %% "zio-test" % zioVersion,
       "dev.zio" %% "zio-test-sbt" % zioVersion
