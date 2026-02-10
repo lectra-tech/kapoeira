@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25.0.1_8-jdk AS builder
+FROM eclipse-temurin:25.0.2_10-jdk AS builder
 
 COPY build.sbt /tmp/build.sbt
 COPY project/build.properties /tmp/build.properties
@@ -38,7 +38,7 @@ RUN sbt clean assembly
 RUN sbt coverageOn test coverageReport coverageOff
 RUN sbt dependencyUpdatesReport
 
-FROM eclipse-temurin:25.0.1_8-jre AS release
+FROM eclipse-temurin:25.0.2_10-jre AS release
 ENV KAFKA_BOOTSTRAP_SERVERS="localhost:9092"
 ENV KAFKA_USERNAME=""
 ENV KAFKA_PASSWORD=""
