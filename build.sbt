@@ -41,7 +41,7 @@ lazy val root = (project in file("."))
       "com.typesafe" % "config" % "1.4.5",
       "io.gatling" % "gatling-jsonpath" % "3.14.9",
       "com.lihaoyi" %% "os-lib" % "0.11.8",
-      "ch.qos.logback" % "logback-classic" % "1.5.27" % Runtime,
+      "ch.qos.logback" % "logback-classic" % "1.5.29" % Runtime,
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-streams" % zioVersion,
       "dev.zio" %% "zio-logging-slf4j2" % "2.5.3",
