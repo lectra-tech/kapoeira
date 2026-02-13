@@ -72,7 +72,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Docker build with unit tests
         id: build-and-test
-        uses: docker/build-push-action@601a80b39c9405e50806ae38af30926f9d957c47 # v6.19.1
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           load: true
@@ -107,7 +107,7 @@ jobs:
       - name: Docker build for many platforms and push into ${{ env.REGISTRY }}
         if: ${{ contains(github.ref, 'refs/tags/') }}
         id: build-and-push
-        uses: docker/build-push-action@601a80b39c9405e50806ae38af30926f9d957c47 # v6.19.1
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           platforms: linux/amd64,linux/arm64
