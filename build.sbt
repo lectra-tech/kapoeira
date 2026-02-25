@@ -38,7 +38,7 @@ lazy val root = (project in file("."))
       "org.apache.kafka" %% "kafka" % "3.9.2",
       "io.cucumber" %% "cucumber-scala" % "8.39.0",
       "org.scalatest" %% "scalatest" % "3.2.19",
-      "com.typesafe" % "config" % "1.4.5",
+      "com.typesafe" % "config" % "1.4.6",
       "io.gatling" % "gatling-jsonpath" % "3.14.9",
       "com.lihaoyi" %% "os-lib" % "0.11.8",
       "ch.qos.logback" % "logback-classic" % "1.5.32" % Runtime,
