@@ -20,7 +20,7 @@ ThisBuild / developers := List(
 )
 
 resolvers += "confluent" at "https://packages.confluent.io/maven/"
-val zioVersion = "2.1.25"
+val zioVersion = "2.1.26"
 
 lazy val root = (project in file("."))
   .settings(
@@ -38,7 +38,7 @@ lazy val root = (project in file("."))
       "org.apache.kafka" %% "kafka" % "3.9.2",
       "io.cucumber" %% "cucumber-scala" % "8.39.1",
       "org.scalatest" %% "scalatest" % "3.2.20",
-      "com.typesafe" % "config" % "1.4.7",
+      "com.typesafe" % "config" % "1.4.8",
       "io.gatling" % "gatling-jsonpath" % "3.15.0",
       "com.lihaoyi" %% "os-lib" % "0.11.8",
       "ch.qos.logback" % "logback-classic" % "1.5.32" % Runtime,
